@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MASTERKIDS – Learning Game</title>
+<style>
+*{box-sizing:border-box;user-select:none;-webkit-user-select:none;font-family:"Sarabun","Noto Sans Thai","Segoe UI",sans-serif}
+:root{
+  --ink:#354052;--muted:#6d7788;--blue:#62b7f4;--blue2:#dff3ff;
+  --mint:#79d6bd;--mint2:#e2f8f1;--yellow:#ffd76a;--yellow2:#fff5ce;
+  --peach:#ffae91;--peach2:#fff0ea;--lav:#bba9ef;--lav2:#f0ebff;
+  --green:#55c48a;--red:#ef767a;--white:#fff;--shadow:0 10px 28px rgba(66,82,110,.14)
+}
+body{margin:0;background:linear-gradient(135deg,#e9f8ff,#fff8e8);min-height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden;color:var(--ink)}
+#game-container{width:min(1100px,96vw);height:min(700px,94vh);background:#fff;border-radius:32px;box-shadow:0 22px 60px rgba(58,76,105,.20);position:relative;overflow:hidden;border:6px solid #fff;display:flex;flex-direction:column}
+.top-bar{height:68px;flex:none;background:rgba(255,255,255,.94);border-bottom:2px solid #edf0f5;display:flex;align-items:center;justify-content:space-between;padding:0 22px;z-index:40}
+.nav-group{display:flex;gap:9px}.bar-btn{border:0;border-radius:16px;padding:10px 15px;font-size:15px;font-weight:800;color:var(--ink);background:#f1f5f9;cursor:pointer;box-shadow:0 3px 0 #dfe5ed;transition:.15s}.bar-btn:active{transform:translateY(2px);box-shadow:0 1px 0 #dfe5ed}.btn-exit{background:#fff0ef;color:#c85b60;box-shadow:0 3px 0 #f1cecc}.bar-title{font-size:20px;font-weight:900;letter-spacing:.5px}.round-indicator{font-size:14px;font-weight:900;background:var(--yellow2);color:#9a7414;border-radius:14px;padding:9px 14px;border:2px solid #f8df91}
+.screen{flex:1;display:none;position:relative;min-height:0}.screen.active{display:flex}
+
+/* Start */
+#start-screen{background:radial-gradient(circle at 15% 15%,#fff 0 8%,transparent 9%),linear-gradient(135deg,#dff5ff,#eefcf7 55%,#fff5d8);flex-direction:column;align-items:center;justify-content:center;overflow:hidden}
+#start-screen:before,#start-screen:after{content:"";position:absolute;border-radius:50%;opacity:.55}
+#start-screen:before{width:280px;height:280px;background:#c9ecff;left:-90px;top:-80px}.start-decor{position:absolute;font-size:58px;opacity:.65}.d1{left:8%;bottom:15%}.d2{right:8%;top:15%}.d3{right:14%;bottom:9%}
+.logo-title{font-size:68px;line-height:1;font-weight:1000;color:#466178;letter-spacing:2px;text-shadow:0 5px #cfe6f5;z-index:2}.logo-sub{font-size:22px;font-weight:800;color:#7a8798;letter-spacing:5px;margin:13px 0 35px;z-index:2}
+.btn-start{width:230px;height:72px;border:0;border-radius:24px;background:var(--yellow);color:#705817;font-size:28px;font-weight:1000;cursor:pointer;box-shadow:0 8px 0 #e8bc42,0 14px 25px rgba(100,85,30,.16);z-index:2}.btn-start:active{transform:translateY(4px);box-shadow:0 4px 0 #e8bc42}
+
+/* Home */
+#home-screen{background:radial-gradient(circle at 8% 12%,rgba(255,215,106,.28) 0 9%,transparent 10%),radial-gradient(circle at 92% 18%,rgba(121,214,189,.25) 0 11%,transparent 12%),linear-gradient(135deg,#eef9ff 0%,#f8fbff 48%,#f1fcf7 100%);flex-direction:column;align-items:center;justify-content:center;gap:20px;overflow:hidden;isolation:isolate}
+#home-screen:before,#home-screen:after{content:"";position:absolute;border-radius:50%;pointer-events:none;z-index:-1}
+#home-screen:before{width:260px;height:260px;left:-105px;bottom:-95px;background:rgba(187,169,239,.18);box-shadow:0 0 0 32px rgba(187,169,239,.06),0 0 0 64px rgba(187,169,239,.035)}
+#home-screen:after{width:220px;height:220px;right:-85px;top:-75px;background:rgba(98,183,244,.18);box-shadow:0 0 0 30px rgba(98,183,244,.06),0 0 0 60px rgba(98,183,244,.035)}
+.home-decoration{position:absolute;pointer-events:none;opacity:.72;z-index:0;filter:drop-shadow(0 5px 8px rgba(70,90,110,.08))}.home-decoration.dog{left:5%;top:15%;font-size:34px;transform:rotate(-10deg)}.home-decoration.star{right:7%;bottom:14%;font-size:31px;transform:rotate(12deg)}.home-decoration.flower{left:11%;bottom:13%;font-size:28px}.home-decoration.cloud{right:13%;top:12%;font-size:30px}
+.section-title{font-size:clamp(27px,4vw,36px);font-weight:1000;color:#43556b;letter-spacing:.2px;text-shadow:0 2px 0 #fff;z-index:2}.menu-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;width:min(850px,92%);z-index:2}.menu-card{min-height:255px;background:#fff;border-radius:28px;border:2px solid rgba(232,238,244,.95);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 12px 28px rgba(66,82,110,.11);transition:transform .2s,box-shadow .2s,border-color .2s;position:relative;overflow:hidden}.menu-card:before{content:"";position:absolute;left:0;right:0;top:0;height:7px;border-radius:28px 28px 0 0}.menu-card:after{content:"";position:absolute;width:105px;height:105px;border-radius:50%;right:-42px;bottom:-48px;background:rgba(255,255,255,.48)}.menu-card:hover{transform:translateY(-7px) scale(1.01);box-shadow:0 18px 38px rgba(66,82,110,.17);border-color:#d9e3ec}.menu-card:nth-child(1){background:linear-gradient(160deg,#fff 35%,#eaf7ff)}.menu-card:nth-child(2){background:linear-gradient(160deg,#fff 35%,#fff7dc)}.menu-card:nth-child(3){background:linear-gradient(160deg,#fff 35%,#eafaf4)}.menu-card:nth-child(1):before{background:var(--blue)}.menu-card:nth-child(2):before{background:var(--yellow)}.menu-card:nth-child(3):before{background:var(--mint)}.menu-art{width:118px;height:118px;border-radius:36px;display:flex;align-items:center;justify-content:center;font-size:70px;margin-bottom:15px;box-shadow:inset 0 -7px 0 rgba(0,0,0,.035),0 8px 18px rgba(66,82,110,.08);transition:transform .2s}.menu-card:hover .menu-art{transform:translateY(-3px) rotate(-2deg)}.menu-card:nth-child(1) .menu-art{background:#dff3ff}.menu-card:nth-child(2) .menu-art{background:#fff1bd}.menu-card:nth-child(3) .menu-art{background:#dff7ee}.menu-card:nth-child(1) .menu-art{font-size:76px}.menu-card span{font-size:22px;font-weight:1000;letter-spacing:.4px;color:#405168}.menu-card small{color:var(--muted);margin-top:7px;font-size:13px}
+
+/* Levels */
+#level-screen{background:#f7fafc;flex-direction:column;align-items:center;padding:22px}.level-heading{text-align:center}.level-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:18px;width:min(760px,94%)}.level-card{height:105px;background:#fff;border:2px solid #e8edf3;border-radius:22px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 6px 16px rgba(66,82,110,.08);transition:.15s}.level-card:hover{transform:translateY(-3px);border-color:#c8ddea}.level-num{font-size:22px;font-weight:1000}.level-type{font-size:11px;color:var(--muted);margin:3px 0}.level-stars{color:#e7ad32;font-size:17px;letter-spacing:2px}
+
+/* Shared game header */
+.game-bg{background:#f8fbfd}.instruction{position:absolute;top:16px;left:50%;transform:translateX(-50%);background:#fff;padding:9px 17px;border-radius:18px;box-shadow:0 5px 15px rgba(66,82,110,.08);font-weight:800;color:#5c6a7d;z-index:30;font-size:14px}.progress-dots{position:absolute;left:50%;bottom:13px;transform:translateX(-50%);display:flex;gap:7px;z-index:30}.progress-dot{width:10px;height:10px;border-radius:50%;background:#dbe2ea}.progress-dot.active{background:#6abbe9;transform:scale(1.25)}.progress-dot.done{background:#77cfad}
+
+/* Matching */
+#matching-screen{flex-direction:row;justify-content:space-between;align-items:center;padding:clamp(22px,5vh,58px) clamp(28px,8vw,92px) clamp(24px,5vh,42px);background:linear-gradient(135deg,#eff9ff,#f7fffb);overflow:hidden}#matching-screen canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:10}.column{display:flex;flex-direction:column;justify-content:space-around;height:min(78%,520px);z-index:20;width:clamp(118px,18vw,195px);gap:clamp(6px,1.2vh,12px);min-width:0}.match-card{width:100%;height:clamp(68px,12vh,104px);min-height:68px;background:#fff;border-radius:clamp(16px,2.2vw,25px);border:3px solid #e9eef4;display:flex;justify-content:center;align-items:center;cursor:pointer;position:relative;box-shadow:0 8px 18px rgba(66,82,110,.10);transition:.15s;overflow:visible}.match-card:hover{transform:scale(1.025)}.match-card.selected{border-color:var(--yellow);background:#fffaf0;transform:scale(1.04)}.match-card.matched{border-color:var(--green);background:#f0fff7;cursor:default}.match-card .visual{font-size:clamp(42px,6vw,70px);line-height:1;display:flex;align-items:center;justify-content:center;width:100%;height:100%}.match-card .label{display:none}.match-dot{width:clamp(12px,1.5vw,16px);height:clamp(12px,1.5vw,16px);background:#b9c7d5;border:3px solid #fff;border-radius:50%;position:absolute;top:50%;transform:translateY(-50%);box-shadow:0 2px 5px #aab5c0}.column.left .match-dot{right:clamp(-20px,-2.2vw,-14px)}.column.right .match-dot{left:clamp(-20px,-2.2vw,-14px)}
+
+/* Quiz */
+#quiz-screen{flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,#fff9e4,#fff);padding:50px 20px}.quiz-question{font-size:29px;max-width:850px;min-height:42px;display:flex;align-items:center;justify-content:center;font-weight:1000;text-align:center;margin-bottom:20px}.quiz-visual{font-size:125px;line-height:1}.quiz-image-container{width:245px;height:245px;background:#fff;border:3px solid #f0e7c7;border-radius:34px;display:flex;align-items:center;justify-content:center;box-shadow:0 14px 28px rgba(93,82,40,.10);font-size:125px}.quiz-hint{font-size:14px;color:var(--muted);margin:14px 0 18px}.quiz-buttons{display:flex;gap:22px}.btn-answer{width:165px;height:62px;border:0;border-radius:20px;font-size:23px;font-weight:1000;color:#fff;cursor:pointer;box-shadow:0 6px 0 rgba(0,0,0,.12);transition:.12s}.btn-answer:active{transform:translateY(3px);box-shadow:0 2px 0 rgba(0,0,0,.12)}.btn-no{background:#ef767a}.btn-yes{background:#55c48a}
+
+/* Feeding */
+#feeding-screen{background:linear-gradient(180deg,#eefaf7,#f9fcfb);flex-direction:column;align-items:center;justify-content:space-between;padding:clamp(24px,6vh,65px) clamp(18px,5vw,55px) clamp(22px,4vh,35px);overflow:hidden}.feed-title{font-size:clamp(16px,2.2vw,23px);font-weight:1000;text-align:center;line-height:1.3;max-width:900px}.characters-container{display:flex;justify-content:space-around;align-items:flex-end;width:100%;height:clamp(250px,44vh,310px);gap:clamp(16px,5vw,40px)}.character-card{display:flex;flex-direction:column;align-items:center;position:relative;width:clamp(145px,26vw,280px);height:clamp(230px,38vh,280px);justify-content:flex-end}
+
+/* Feeding UX refresh */
+#feeding-screen{position:relative;isolation:isolate;gap:clamp(6px,1.5vh,14px)}
+#feeding-screen .feed-title{background:rgba(255,255,255,.9);padding:10px 18px;border-radius:999px;box-shadow:0 5px 16px rgba(66,82,110,.08);color:#526276;z-index:20}
+.characters-container{position:relative;flex:1;height:auto;min-height:260px;max-height:330px;align-items:stretch;justify-content:space-between;padding:0 clamp(18px,6vw,70px);z-index:5}
+.character-card{height:100%;min-height:250px;width:clamp(170px,27vw,290px);justify-content:flex-end;padding-bottom:10px;z-index:5}
+.thought-bubble{position:absolute;top:0;left:50%;transform:translateX(-50%);width:clamp(108px,12vw,150px);height:clamp(76px,10vw,96px);background:#fff;border:3px solid #eef1f5;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 20px rgba(66,82,110,.12);z-index:12}
+.thought-bubble:after{content:"";position:absolute;bottom:-13px;left:50%;width:22px;height:22px;background:#fff;border-right:3px solid #eef1f5;border-bottom:3px solid #eef1f5;transform:translateX(-50%) rotate(45deg);border-radius:3px;z-index:-1}
+.want-food{font-size:clamp(40px,6vw,62px);line-height:1;display:flex;align-items:center;justify-content:center;width:100%;height:100%;position:relative;z-index:2}
+.target-ring{position:absolute;top:52%;left:50%;transform:translate(-50%,-50%);width:clamp(175px,23vw,235px);height:clamp(175px,23vw,235px);border:5px dashed #6fcfb0;border-radius:50%;background:rgba(121,214,189,.07);z-index:1;pointer-events:none}
+.char-illustration{position:relative;z-index:4;width:clamp(110px,15vw,150px);height:clamp(110px,15vw,150px);display:flex;align-items:center;justify-content:center;font-size:clamp(78px,10vw,115px);line-height:1;filter:drop-shadow(0 7px 5px rgba(66,82,110,.12))}
+.character-card.target .target-ring{border-color:#58c69f;background:rgba(121,214,189,.14);box-shadow:0 0 0 6px rgba(121,214,189,.08)}
+.character-card.target .char-illustration{transform:scale(1.04)}
+.npc-name{position:relative;z-index:15;margin-top:3px;background:#fff;padding:5px 13px;border-radius:999px;color:#526276;font-size:clamp(14px,2vw,18px);font-weight:900;box-shadow:0 4px 12px rgba(66,82,110,.08)}
+.food-tray{position:relative;width:min(260px,42vw);height:82px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.8);border:2px solid #edf1f5;border-radius:30px;box-shadow:0 8px 18px rgba(66,82,110,.08);z-index:30;margin-bottom:4px}
+.draggable-food{position:absolute!important;left:50%;top:50%;transform:translate(-50%,-50%)!important;width:clamp(68px,9vw,88px);height:clamp(68px,9vw,88px);background:#fff;border:3px solid #f2c85b;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 7px 15px rgba(66,82,110,.16);cursor:grab;touch-action:none;z-index:50}
+.draggable-food.dragging{cursor:grabbing;box-shadow:0 12px 24px rgba(66,82,110,.2);transform:scale(1.06)!important}
+.food-visual{font-size:clamp(40px,6vw,58px);line-height:1;display:flex;align-items:center;justify-content:center}
+@media(max-width:700px){#feeding-screen{padding:16px 12px 12px}.characters-container{padding:0 2px;gap:8px;min-height:235px;max-height:none}.character-card{width:46vw;min-height:225px}.thought-bubble{width:clamp(100px,28vw,132px);height:clamp(70px,20vw,88px)}.target-ring{width:clamp(145px,43vw,185px);height:clamp(145px,43vw,185px)}.char-illustration{font-size:clamp(68px,19vw,96px)}.npc-name{font-size:14px;padding:4px 10px}.food-tray{width:150px;height:72px}}
+@media(max-height:620px){#feeding-screen .feed-title{padding:7px 14px}.characters-container{min-height:210px}.character-card{min-height:205px}.thought-bubble{transform:translateX(-50%) scale(.9)}.target-ring{width:clamp(135px,27vh,170px);height:clamp(135px,27vh,170px)}.char-illustration{font-size:clamp(64px,16vh,88px)}.food-tray{height:64px}}
+
+/* Modal */
+#game-modal{position:fixed;inset:0;background:rgba(48,60,76,.34);display:none;justify-content:center;align-items:center;z-index:99999;backdrop-filter:blur(3px);padding:18px;box-sizing:border-box}
+.modal-box{background:#fff;border-radius:clamp(22px,3vw,30px);padding:clamp(22px,4vw,30px) clamp(20px,5vw,38px);text-align:center;box-shadow:0 18px 45px rgba(40,50,70,.22);border:3px solid #edf0f5;width:min(92%,440px);animation:pop .22s ease}.modal-icon{font-size:clamp(42px,7vw,55px);margin-bottom:5px}.modal-title{font-size:clamp(22px,4vw,26px);font-weight:1000}.modal-message{font-size:clamp(14px,2vw,15px);color:var(--muted);margin:8px 0 14px}.modal-stars{font-size:clamp(28px,5vw,35px);color:#e9b339;margin-bottom:10px}.modal-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:10px}.modal-btn{background:#67bce9;border:0;color:#fff;font-size:clamp(15px,2.5vw,18px);font-weight:900;padding:11px 20px;border-radius:17px;cursor:pointer;box-shadow:0 5px 0 #4b9fc8}.modal-secondary{background:#79d6bd;box-shadow:0 5px 0 #52b89c}.modal-exit{background:#ef767a;box-shadow:0 5px 0 #d85c61}.modal-btn:active{transform:translateY(3px);box-shadow:0 2px 0 #4b9fc8}@keyframes pop{from{transform:scale(.9);opacity:0}to{transform:scale(1);opacity:1}}
+@media(max-width:800px){#game-container{height:96vh}.menu-grid{gap:10px}.menu-card{min-height:210px}.menu-art{width:80px;height:80px;font-size:48px}.level-grid{grid-template-columns:repeat(3,1fr)}#matching-screen{padding-left:35px;padding-right:35px}.column{width:145px}.match-card{width:135px}.characters-container{gap:10px}.character-card{width:220px}}
+
+/* Responsive layout: scale naturally across desktop, tablet and mobile */
+#game-container{width:min(1100px,calc(100vw - 20px));height:min(700px,calc(100vh - 20px));}
+.top-bar{height:clamp(54px,8vh,68px);padding:0 clamp(10px,2vw,22px);gap:8px}.nav-group{gap:clamp(5px,1vw,9px)}.bar-btn{padding:clamp(8px,1.5vh,10px) clamp(9px,1.5vw,15px);font-size:clamp(12px,1.5vw,15px)}.bar-title{font-size:clamp(15px,2.2vw,20px)}.round-indicator{font-size:clamp(11px,1.4vw,14px);padding:7px 10px}
+.logo-title{font-size:clamp(42px,8vw,68px)}.logo-sub{font-size:clamp(15px,2.5vw,22px);margin-bottom:clamp(20px,5vh,35px)}.btn-start{width:min(230px,60vw);height:clamp(58px,9vh,72px);font-size:clamp(22px,4vw,28px)}
+.section-title{font-size:clamp(24px,4vw,32px)}.menu-grid{grid-template-columns:repeat(3,minmax(0,1fr));width:min(850px,94%);gap:clamp(8px,2vw,20px)}.menu-card{min-height:clamp(170px,32vh,255px);border-radius:clamp(18px,2.5vw,26px)}.menu-card span{font-size:clamp(16px,2.2vw,22px)}
+.level-grid{grid-template-columns:repeat(4,minmax(0,1fr));width:min(760px,94%);gap:clamp(8px,1.5vw,14px)}.level-card{height:clamp(78px,14vh,105px)}
+#quiz-screen{padding:clamp(24px,5vh,50px) 16px}.quiz-question{font-size:clamp(20px,3.2vw,29px);max-width:90%;margin-bottom:clamp(12px,2vh,20px)}.quiz-image-container{width:clamp(170px,30vw,245px);height:clamp(170px,30vw,245px);font-size:clamp(82px,13vw,125px)}.btn-answer{width:clamp(120px,18vw,165px);height:clamp(52px,8vh,62px);font-size:clamp(18px,2.5vw,23px)}
+@media(max-width:700px){#game-container{width:100vw;height:100vh;border-radius:0;border-width:0}.menu-grid{grid-template-columns:1fr;width:min(420px,90%)}.menu-card{min-height:145px;display:grid;grid-template-columns:78px 1fr;grid-template-rows:1fr 1fr;column-gap:12px;text-align:left;padding:12px}.menu-art{grid-row:1 / 3;width:68px;height:68px;margin:0;font-size:40px}.menu-card span,.menu-card small{align-self:end}.menu-card small{align-self:start}.level-grid{grid-template-columns:repeat(3,minmax(0,1fr));overflow:auto;padding-bottom:10px}.level-screen{overflow:auto}#matching-screen{padding-left:clamp(16px,5vw,35px);padding-right:clamp(16px,5vw,35px)}.column{width:clamp(108px,32vw,145px);height:76%}.match-card{height:clamp(66px,12vh,90px)}.match-card .visual{font-size:clamp(38px,10vw,58px)}.column.left .match-dot{right:-12px}.column.right .match-dot{left:-12px}.characters-container{gap:8px}.character-card{width:44vw}.feed-title{max-width:95%}.target-ring{top:54%;bottom:auto;width:clamp(150px,44vw,190px);height:clamp(150px,44vw,190px)}.npc-name{bottom:0}}
+@media(max-height:620px){#matching-screen .column{height:82%}.match-card{height:clamp(58px,11vh,78px)}#feeding-screen{padding-top:16px;padding-bottom:12px}.characters-container{height:44vh}.char-illustration{z-index:5;width:clamp(105px,18vh,150px);height:clamp(105px,18vh,150px)}.target-ring{width:clamp(135px,28vh,175px);height:clamp(135px,28vh,175px);top:54%;bottom:auto}.food-tray{height:70px}}
+
+/* Final responsive safety adjustments */
+.level-card{gap:4px;padding:8px;min-width:0}
+.level-stars{font-size:clamp(14px,2vw,18px);line-height:1}
+@media(max-width:700px){
+  .top-bar{min-height:54px}
+  .bar-title{max-width:34vw;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #matching-screen{padding-top:clamp(18px,4vh,38px);padding-bottom:clamp(20px,4vh,38px)}
+  .column{max-width:42vw}
+  .match-card{max-width:100%;overflow:hidden}
+  .match-card .visual{font-size:clamp(34px,9vw,56px)}
+}
+</style>
+</head>
+<body>
+<div id="game-container">
+<div class="top-bar" id="top-bar" style="display:none">
+  <div class="nav-group"><button class="bar-btn" onclick="handleBack()">← ย้อนกลับ</button><button class="bar-btn btn-exit" onclick="confirmExit()">ออกจากเกม</button></div>
+  <div class="bar-title" id="bar-title">MASTERKIDS</div>
+  <div class="round-indicator" id="round-indicator">รอบ 1/5</div>
+</div>
+
+<div id="start-screen" class="screen active">
+  <span class="start-decor d1">🌿</span><span class="start-decor d2">☁️</span><span class="start-decor d3">🌈</span>
+  <div class="logo-title">MASTERKIDS</div><div class="logo-sub">GAME</div>
+  <button class="btn-start" onclick="showScreen('home-screen')">START</button>
+</div>
+
+<div id="home-screen" class="screen">
+  <span class="home-decoration dog">🐾</span><span class="home-decoration star">⭐</span><span class="home-decoration flower">🌼</span><span class="home-decoration cloud">☁️</span>
+  <div class="section-title">เลือกเกมที่ต้องการเล่น</div>
+  <div class="menu-grid">
+    <div class="menu-card" onclick="selectGame('matching')"><div class="menu-art">🐰</div><span>MATCHING</span><small>จับคู่ภาพที่สัมพันธ์กัน</small></div>
+    <div class="menu-card" onclick="selectGame('quiz')"><div class="menu-art">❓</div><span>YES OR NO</span><small>ดูภาพแล้วตอบใช่หรือไม่</small></div>
+    <div class="menu-card" onclick="selectGame('feeding')"><div class="menu-art">🍎</div><span>WHAT I EAT?</span><small>ส่งอาหารให้เพื่อน</small></div>
+  </div>
+</div>
+
+<div id="level-screen" class="screen">
+  <div class="level-heading"><div class="section-title" id="level-menu-title">เลือกด่าน</div></div>
+  <div class="level-grid" id="level-grid"></div>
+</div>
+
+<div id="matching-screen" class="screen game-bg">
+  <canvas id="line-canvas"></canvas>
+  <div class="column left" id="left-column"></div><div class="column right" id="right-column"></div>
+  <div class="progress-dots" id="match-dots"></div>
+</div>
+
+<div id="quiz-screen" class="screen">
+  <div class="quiz-question" id="quiz-question"></div><div class="quiz-image-container" id="quiz-img"></div>
+  <div class="quiz-hint">ดูภาพให้ดี แล้วเลือกคำตอบ</div>
+  <div class="quiz-buttons"><button class="btn-answer btn-no" onclick="answerQuiz(false)">✕ ไม่ใช่</button><button class="btn-answer btn-yes" onclick="answerQuiz(true)">✓ ใช่</button></div>
+  <div class="progress-dots" id="quiz-dots"></div>
+</div>
+
+<div id="feeding-screen" class="screen">
+  <div class="feed-title">🍽️ นำอาหารที่เห็นไปให้เพื่อนที่ต้องการอาหารชนิดนั้น</div>
+  <div class="characters-container">
+    <div class="character-card" id="char-1"><div class="thought-bubble"><div class="want-food" id="want-img-1"></div></div><div class="target-ring"></div><div class="char-illustration npc1">🐻</div><div class="npc-name">น้องหมี</div></div>
+    <div class="character-card" id="char-2"><div class="thought-bubble"><div class="want-food" id="want-img-2"></div></div><div class="target-ring"></div><div class="char-illustration npc2">🐰</div><div class="npc-name">น้องกระต่าย</div></div>
+  </div>
+  <div class="food-tray"><div class="draggable-food" id="active-food"><div class="food-visual" id="food-img"></div></div></div>
+  <div class="progress-dots" id="feed-dots"></div>
+</div>
+
+<div id="game-modal"><div class="modal-box"><div class="modal-icon" id="modal-icon">🎉</div><div class="modal-title" id="modal-title">เก่งมาก!</div><div class="modal-message" id="modal-message"></div><div class="modal-stars" id="modal-stars" style="display:none">★★★</div><div class="modal-actions"><button class="modal-btn" id="modal-btn" onclick="closeModal()">ต่อไป</button><button class="modal-btn modal-secondary" id="modal-secondary-btn" style="display:none" onclick="closeModal()">เลือกด่าน</button><button class="modal-btn modal-exit" id="modal-exit-btn" style="display:none" onclick="closeModal()">ออกจากเกม</button></div></div></div>
+</div>
+
+<script>
+const TOTAL_LEVELS=12, ROUNDS_PER_LEVEL=5;
+let userProgress={matching:Array(12).fill(0),quiz:Array(12).fill(0),feeding:Array(12).fill(0)};
+let currentScreenState='start-screen',selectedGame='',currentLevel=1,currentRound=1,modalCallback=null;
+let selectedLeftItem=null,completedPairs=0,currentConnectedLines=[],currentQuizItem=null,currentFeedRound=null,dragCleanup=null;
+
+const V=(emoji,label)=>({emoji,label});
+const animals=[
+ V('🐶','สุนัข'),V('🐱','แมว'),V('🐰','กระต่าย'),V('🦁','สิงโต'),V('🐘','ช้าง'),V('🐼','แพนด้า'),
+ V('🐵','ลิง'),V('🦊','สุนัขจิ้งจอก'),V('🐨','โคอาลา'),V('🐯','เสือ'),V('🐸','กบ'),V('🐧','เพนกวิน'),
+ V('🐢','เต่า'),V('🦒','ยีราฟ'),V('🐮','วัว'),V('🐷','หมู'),V('🐥','ลูกเจี๊ยบ'),V('🦄','ยูนิคอร์น'),
+ V('🐳','วาฬ'),V('🐙','ปลาหมึก'),V('🦋','ผีเสื้อ'),V('🐝','ผึ้ง'),V('🦓','ม้าลาย'),V('🦌','กวาง'),
+ V('🐿️','กระรอก'),V('🦔','เม่น'),V('🐹','แฮมสเตอร์'),V('🦜','นกแก้ว'),V('🦩','ฟลามิงโก'),V('🐬','โลมา'),
+ V('🦭','แมวน้ำ'),V('🦥','สลอธ'),V('🐫','อูฐ'),V('🦘','จิงโจ้'),V('🦏','แรด'),V('🦛','ฮิปโป'),V('🦙','ลามะ'),V('🦬','ไบซัน')
+];
+const foods=[
+ V('🦴','กระดูก'),V('🐟','ปลาย่าง'),V('🥕','แครอท'),V('🍖','เนื้อ'),V('🍌','กล้วย'),V('🍊','ส้ม'),
+ V('🍒','เชอร์รี่'),V('🥭','มะม่วง'),V('🍎','แอปเปิล'),V('🍉','แตงโม'),V('🍓','สตรอว์เบอร์รี'),V('🍍','สับปะรด'),
+ V('🍇','องุ่น'),V('🍐','ลูกแพร์'),V('🥝','กีวี'),V('🍑','พีช'),V('🥥','มะพร้าว'),V('🌽','ข้าวโพด'),
+ V('🥔','มันฝรั่ง'),V('🍅','มะเขือเทศ'),V('🥦','บรอกโคลี'),V('🥚','ไข่'),V('🥛','นม'),V('🍞','ขนมปัง'),
+ V('🧀','ชีส'),V('🍪','คุกกี้'),V('🍚','ข้าว'),V('🥜','ถั่ว'),V('🍈','เมลอน'),V('🍋','เลมอน'),
+ V('🍏','แอปเปิลเขียว'),V('🫐','บลูเบอร์รี'),V('🍐','แพร์'),V('🥨','เพรตเซล'),V('🍰','เค้ก'),V('🥞','แพนเค้ก'),
+ V('🍠','มันหวาน'),V('🥬','ผักกาด'),V('🍄','เห็ด'),V('🥒','แตงกวา'),V('🫛','ถั่วลันเตา'),V('🍯','น้ำผึ้ง'),
+ V('🥣','ซีเรียล'),V('🍜','บะหมี่'),V('🍙','ข้าวปั้น'),V('🍣','ซูชิ'),V('🥗','สลัด'),V('🥑','อะโวคาโด'),
+ V('🧁','คัพเค้ก'),V('🍧','น้ำแข็งไส'),V('🍫','ช็อกโกแลต'),V('🥪','แซนด์วิช'),V('🌮','ทาโก้'),V('🍝','สปาเกตตี'),
+ V('🍲','ซุป'),V('🥘','อาหารผัด'),V('🍛','ข้าวแกง'),V('🧇','วาฟเฟิล'),V('🥯','เบเกิล'),V('🥤','น้ำผลไม้')
+];
+const objects=[
+ V('⚽','ลูกบอล'),V('🎈','ลูกโป่ง'),V('✏️','ดินสอ'),V('📚','หนังสือ'),V('🎒','กระเป๋า'),V('🧸','ตุ๊กตา'),
+ V('🚗','รถ'),V('🚲','จักรยาน'),V('☂️','ร่ม'),V('🧢','หมวก'),V('👟','รองเท้า'),V('🧤','ถุงมือ'),
+ V('🕶️','แว่นตา'),V('⌚','นาฬิกา'),V('🔑','กุญแจ'),V('🔔','กระดิ่ง'),V('🪥','แปรงสีฟัน'),V('🧴','ขวดน้ำ'),
+ V('🧃','กล่องน้ำผลไม้'),V('🪁','ว่าว'),V('🪀','โยโย่'),V('🧩','จิ๊กซอว์'),V('🎨','สี'),V('🖍️','สีเทียน'),
+ V('✂️','กรรไกร'),V('📏','ไม้บรรทัด'),V('🧢','หมวกแก๊ป'),V('🧦','ถุงเท้า'),V('🧺','ตะกร้า'),V('🪣','ถัง'),
+ V('🕯️','เทียน'),V('🔦','ไฟฉาย'),V('📷','กล้อง'),V('🎧','หูฟัง'),V('📱','โทรศัพท์'),V('💡','หลอดไฟ'),
+ V('🧹','ไม้กวาด'),V('🧼','สบู่'),V('🪞','กระจก'),V('🪑','เก้าอี้'),V('🛏️','เตียง'),V('🚪','ประตู')
+];
+
+/* Matching: 12 levels × 1 round, 4 semantically related animal-food pairs per level.
+   Animals are rotated so adjacent levels do not repeat the same animals. */
+const matchingLevels=[
+  [
+    ['🐶','สุนัข','🦴','กระดูก'],['🐱','แมว','🐟','ปลา'],['🐰','กระต่าย','🥕','แครอท'],['🦁','สิงโต','🍖','เนื้อ']
+  ],
+  [
+    ['🐭','หนู','🧀','ชีส'],['🐵','ลิง','🍌','กล้วย'],['🐘','ช้าง','🍉','แตงโม'],['🐻','หมี','🍯','น้ำผึ้ง']
+  ],
+  [
+    ['🐮','วัว','🌽','ข้าวโพด'],['🐷','หมู','🍎','แอปเปิล'],['🐥','ลูกเจี๊ยบ','🥚','ไข่'],['🐴','ม้า','🍏','แอปเปิลเขียว']
+  ],
+  [
+    ['🐢','เต่า','🥬','ผักกาด'],['🦌','กวาง','🍓','สตรอว์เบอร์รี'],['🐿️','กระรอก','🥜','ถั่ว'],['🐹','แฮมสเตอร์','🥣','ซีเรียล']
+  ],
+  [
+    ['🦋','ผีเสื้อ','🌸','ดอกไม้'],['🐝','ผึ้ง','🍯','น้ำผึ้ง'],['🦜','นกแก้ว','🍇','องุ่น'],['🐸','กบ','🪰','แมลงวัน']
+  ],
+  [
+    ['🐧','เพนกวิน','🐟','ปลาแฮร์ริง'],['🐬','โลมา','🦐','กุ้ง'],['🦭','แมวน้ำ','🦑','ปลาหมึก'],['🐙','ปลาหมึก','🦀','ปู']
+  ],
+  [
+    ['🦊','สุนัขจิ้งจอก','🐭','หนู'],['🐯','เสือ','🍗','ไก่'],['🦉','นกฮูก','🐁','หนูบ้าน'],['🦅','นกอินทรี','🐠','ปลาตัวเล็ก']
+  ],
+  [
+    ['🐍','งู','🐁','หนูนา'],['🦦','นาก','🐟','ปลาเทราต์'],['🦩','ฟลามิงโก','🦐','กุ้งตัวเล็ก'],['🦎','กิ้งก่า','🪲','ด้วง']
+  ],
+  [
+    ['🐘','ช้าง','🍌','กล้วย'],['🐵','ลิง','🍊','ส้ม'],['🐶','สุนัข','🍪','คุกกี้'],['🐱','แมว','🥛','นม']
+  ],
+  [
+    ['🐰','กระต่าย','🥦','บรอกโคลี'],['🐮','วัว','🥔','มันฝรั่ง'],['🐷','หมู','🍠','มันหวาน'],['🐔','ไก่','🌽','ข้าวโพด']
+  ],
+  [
+    ['🦙','ลามะ','🥕','แครอท'],['🦄','ยูนิคอร์น','🍓','เบอร์รี'],['🐼','แพนด้า','🍎','แอปเปิล'],['🐨','โคอาลา','🍐','ลูกแพร์']
+  ],
+  [
+    ['🦛','ฮิปโป','🍉','แตงโม'],['🦏','แรด','🥭','มะม่วง'],['🦬','ไบซัน','🌽','ข้าวโพด'],['🐳','วาฬ','🐟','ปลา']
+  ]
+];
+
+function makeMatchingLevel(level){
+ const pairs=matchingLevels[level-1].map((x,i)=>({
+   id:i+1,
+   left:{emoji:x[0],label:x[1]},
+   right:{emoji:x[2],label:x[3]}
+ }));
+ return {pairs};
+}
+
+/* 60 quiz rounds. Each displayed image is unique.
+   For No questions, the question deliberately names a different item than the image. */
+
+const quizPool=[
+ ...animals.slice(0,36),
+ V('🍎','แอปเปิล'),V('🍌','กล้วย'),V('🍊','ส้ม'),V('🍉','แตงโม'),V('🍓','สตรอว์เบอร์รี'),
+ V('🍍','สับปะรด'),V('🍇','องุ่น'),V('🥭','มะม่วง'),V('🥥','มะพร้าว'),V('🥝','กีวี'),
+ V('🍒','เชอร์รี่'),V('🍑','พีช'),V('🌽','ข้าวโพด'),V('🥕','แครอท'),V('🥦','บรอกโคลี'),
+ V('🥔','มันฝรั่ง'),V('🍅','มะเขือเทศ'),V('🥚','ไข่'),V('🥛','นม'),V('🍞','ขนมปัง'),
+ V('🧀','ชีส'),V('🍪','คุกกี้'),V('🥑','อะโวคาโด')
+];
+const quizRounds=[];
+// Keep exactly 60 unique displayed images: 12 levels × 5 rounds.
+for(let i=0;i<60;i++){
+ const shown=quizPool[i];
+ const answer=i%2===0;
+ const wrong=quizPool[(i+17)%quizPool.length];
+ const asked=answer?shown:wrong;
+ quizRounds.push({
+   shown,
+   answer,
+   question:`นี่คือ ${asked.label} ใช่หรือไม่?`
+ });
+}
+
+/* Feeding: each level has 5 rounds. Each round has 2 different wants and one target.
+   Target always equals exactly one NPC's current want. */
+const feedRounds=[];
+for(let level=1;level<=12;level++){
+ for(let round=1;round<=5;round++){
+   const idx=(level-1)*5+round-1;
+   const a=foods[(idx*2+4)%foods.length], b=foods[(idx*2+5)%foods.length];
+   const target=(round%2===1)?b:a;
+   feedRounds.push({level,round,wants:[a,b],target});
+ }
+}
+
+function showGameAlert(icon,title,message='',stars=null,button='ต่อไป',callback=null){
+ document.getElementById('modal-icon').textContent=icon;
+ document.getElementById('modal-title').textContent=title;
+ document.getElementById('modal-message').textContent=message;
+ const s=document.getElementById('modal-stars'); s.style.display=stars?'block':'none'; if(stars)s.textContent=stars;
+ const primary=document.getElementById('modal-btn');
+ primary.textContent=button;
+ primary.onclick=closeModal;
+ document.getElementById('modal-secondary-btn').style.display='none';
+ document.getElementById('modal-exit-btn').style.display='none';
+ document.getElementById('game-modal').style.display='flex'; modalCallback=callback;
+}
+function showLevelComplete(){
+ const nextBtn=document.getElementById('modal-btn'),levelBtn=document.getElementById('modal-secondary-btn'),exitBtn=document.getElementById('modal-exit-btn');
+ document.getElementById('modal-icon').textContent='🎉';
+ document.getElementById('modal-title').textContent='ผ่านด่านแล้ว!';
+ const msg=selectedGame==='matching'?'จับคู่สัตว์กับอาหารครบทั้ง 4 คู่แล้ว!':selectedGame==='quiz'?'ตอบครบทั้ง 5 ข้อแล้ว!':'ทำครบทั้ง 5 รอบได้ดีมาก!';
+ document.getElementById('modal-message').textContent=msg;
+ document.getElementById('modal-stars').style.display='block';document.getElementById('modal-stars').textContent='★★★';
+ if(currentLevel<TOTAL_LEVELS){
+   nextBtn.textContent=`ด่าน ${currentLevel+1}`;nextBtn.style.display='inline-flex';nextBtn.onclick=()=>{closeModal();startLevel(currentLevel+1)};
+ }else{nextBtn.textContent='เลือกด่าน';nextBtn.style.display='inline-flex';nextBtn.onclick=()=>{closeModal();renderLevelGrid();showScreen('level-screen')};}
+ levelBtn.textContent='เลือกด่าน';levelBtn.style.display='inline-flex';levelBtn.onclick=()=>{closeModal();renderLevelGrid();showScreen('level-screen')};
+ exitBtn.style.display='inline-flex';exitBtn.onclick=()=>{closeModal();showScreen('home-screen')};
+ document.getElementById('game-modal').style.display='flex';
+}
+function closeModal(){document.getElementById('game-modal').style.display='none';const cb=modalCallback;modalCallback=null;if(cb)cb()}
+function confirmExit(){
+ showGameAlert('🚪','ออกจากเกม?','ต้องการกลับไปหน้า GAME ใช่หรือไม่',null,'ออกจากเกม',()=>{
+   selectedLeftItem=null;completedPairs=0;currentConnectedLines=[];currentQuizItem=null;currentFeedRound=null;
+   if(dragCleanup) dragCleanup();
+   showScreen('home-screen');
+ });
+}
+
+function showScreen(id){
+ // Always clear any leftover modal when changing screens. This prevents alerts appearing behind Home/Level screens.
+ const modal=document.getElementById('game-modal');
+ if(modal){modal.style.display='none';modalCallback=null;}
+ currentScreenState=id; document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');
+ const top=document.getElementById('top-bar'),round=document.getElementById('round-indicator');
+ if(id==='start-screen'){top.style.display='none'}
+ else{top.style.display='flex';round.style.display=['home-screen','level-screen'].includes(id)?'none':'block'}
+ if(id==='home-screen')document.getElementById('bar-title').textContent='MASTERKIDS';
+ if(id==='level-screen')document.getElementById('bar-title').textContent=gameTitle(selectedGame);
+}
+function gameTitle(g){return {matching:'MATCHING',quiz:'YES OR NO',feeding:'WHAT I EAT?'}[g]||'MASTERKIDS'}
+function handleBack(){
+ if(currentScreenState==='home-screen')showScreen('start-screen');
+ else if(currentScreenState==='level-screen')showScreen('home-screen');
+ else if(['matching-screen','quiz-screen','feeding-screen'].includes(currentScreenState)){renderLevelGrid();showScreen('level-screen')}
+}
+function selectGame(g){selectedGame=g;document.getElementById('level-menu-title').textContent=`${gameTitle(g)} • เลือกด่าน`;renderLevelGrid();showScreen('level-screen')}
+function renderLevelGrid(){
+ const grid=document.getElementById('level-grid');grid.innerHTML='';
+ for(let i=1;i<=TOTAL_LEVELS;i++){
+  const stars=userProgress[selectedGame][i-1],card=document.createElement('div');card.className='level-card';
+  card.innerHTML=`<div class="level-num">ด่าน ${i}</div><div class="level-stars">${stars?'★★★':'☆☆☆'}</div>`;
+  card.onclick=()=>startLevel(i);grid.appendChild(card);
+ }
+}
+function maxRoundsForGame(){return selectedGame==='matching'?1:ROUNDS_PER_LEVEL;}
+function updateHeader(){document.getElementById('bar-title').textContent=`${gameTitle(selectedGame)} • ด่าน ${currentLevel}`;document.getElementById('round-indicator').textContent=`รอบ ${currentRound}/${maxRoundsForGame()}`}
+function makeDots(id){const e=document.getElementById(id);e.innerHTML='';const max=maxRoundsForGame();for(let i=1;i<=max;i++){const d=document.createElement('span');d.className='progress-dot '+(i<currentRound?'done ':'')+(i===currentRound?'active':'');e.appendChild(d)}}
+function startLevel(lvl){currentLevel=lvl;currentRound=1;updateHeader();showScreen(selectedGame==='matching'?'matching-screen':selectedGame==='quiz'?'quiz-screen':'feeding-screen');selectedGame==='matching'?setupMatchingRound():selectedGame==='quiz'?setupQuizRound():setupFeedingRound()}
+function nextRound(){
+ const maxRounds=selectedGame==='matching'?1:5;
+ if(currentRound<maxRounds){
+   currentRound++;updateHeader();
+   selectedGame==='matching'?setupMatchingRound():selectedGame==='quiz'?setupQuizRound():setupFeedingRound();
+ }else{
+   userProgress[selectedGame][currentLevel-1]=3;
+   showLevelComplete();
+ }
+}
+
+/* MATCHING */
+const canvas=document.getElementById('line-canvas'),ctx=canvas.getContext('2d');
+function setupMatchingRound(){
+ selectedLeftItem=null;completedPairs=0;currentConnectedLines=[];
+ const data=makeMatchingLevel(currentLevel),left=document.getElementById('left-column'),right=document.getElementById('right-column');
+ left.innerHTML='';right.innerHTML='';
+ const rightItems=[...data.pairs].sort(()=>Math.random()-.5);
+ data.pairs.forEach(item=>left.appendChild(matchCard(item.left,item.id,true)));
+ rightItems.forEach(item=>right.appendChild(matchCard(item.right,item.id,false)));
+ resizeCanvas();makeDots('match-dots');
+}
+function matchCard(v,id,isLeft){
+ const d=document.createElement('div');d.className='match-card';d.dataset.id=id;
+ const visual=isLeft?v.emoji:v.emoji;
+ d.innerHTML=`<div class="visual" aria-label="${v.label}">${visual}</div><div class="match-dot"></div>`;
+ d.onclick=()=>isLeft?selectLeftCircle(d):selectRightCircle(d);return d;
+}
+function resizeCanvas(){const r=document.getElementById('matching-screen').getBoundingClientRect();canvas.width=r.width;canvas.height=r.height;redrawCanvasLines()}
+window.addEventListener('resize',()=>{if(currentScreenState==='matching-screen')resizeCanvas()})
+function selectLeftCircle(e){if(e.classList.contains('matched'))return;document.querySelectorAll('#left-column .match-card').forEach(x=>x.classList.remove('selected'));e.classList.add('selected');selectedLeftItem=e}
+function selectRightCircle(e){
+ if(!selectedLeftItem||e.classList.contains('matched'))return;
+ if(selectedLeftItem.dataset.id===e.dataset.id){
+   selectedLeftItem.classList.remove('selected');selectedLeftItem.classList.add('matched');e.classList.add('matched');drawConnectionLine(selectedLeftItem,e);completedPairs++;selectedLeftItem=null;
+   if(completedPairs===4)setTimeout(()=>showGameAlert('✨','จับคู่ครบแล้ว!','ยอดเยี่ยมมาก','★★★','รอบต่อไป',nextRound),350);
+ }else{
+   if(selectedLeftItem) selectedLeftItem.classList.remove('selected');
+   selectedLeftItem=null;
+   showGameAlert('💛','ลองอีกครั้ง','ค่อย ๆ ดูความสัมพันธ์ของภาพนะ',null,'ลองใหม่');
+ }
+}
+function drawConnectionLine(a,b){
+ const ar=a.querySelector('.match-dot').getBoundingClientRect(),br=b.querySelector('.match-dot').getBoundingClientRect(),cr=canvas.getBoundingClientRect();
+ currentConnectedLines.push({x1:ar.left+8-cr.left,y1:ar.top+8-cr.top,x2:br.left+8-cr.left,y2:br.top+8-cr.top});redrawCanvasLines()
+}
+function redrawCanvasLines(){ctx.clearRect(0,0,canvas.width,canvas.height);ctx.strokeStyle='#75cda9';ctx.lineWidth=6;ctx.lineCap='round';currentConnectedLines.forEach(l=>{ctx.beginPath();ctx.moveTo(l.x1,l.y1);ctx.lineTo(l.x2,l.y2);ctx.stroke()})}
+
+/* YES / NO */
+function setupQuizRound(){
+ const quizIndex=(currentLevel-1)*5+(currentRound-1);
+ currentQuizItem=quizRounds[quizIndex];
+ // Safety fallback: never allow a missing final-round item to leave the image blank.
+ if(!currentQuizItem || !currentQuizItem.shown){
+   const fallback=quizPool[quizIndex % quizPool.length];
+   currentQuizItem={shown:fallback,answer:true,question:`นี่คือ ${fallback.label} ใช่หรือไม่?`};
+ }
+ document.getElementById('quiz-question').textContent=currentQuizItem.question;
+ const quizImg=document.getElementById('quiz-img');
+ quizImg.innerHTML='';
+ const visual=document.createElement('span');
+ visual.className='quiz-visual';
+ visual.setAttribute('aria-label',currentQuizItem.shown.label);
+ visual.textContent=currentQuizItem.shown.emoji;
+ quizImg.appendChild(visual);
+ makeDots('quiz-dots');
+}
+function answerQuiz(ans){
+ const isCorrect=ans===currentQuizItem.answer;
+ if(isCorrect){
+   // Correct Yes: continue immediately without an extra notification.
+   if(currentQuizItem.answer===true){
+     nextRound();
+     return;
+   }
+   // Correct No: explain what the picture actually is, then continue.
+   showGameAlert('🎉','เก่งมาก!',`นี้คือ ${currentQuizItem.shown.label}`,null,'ข้อถัดไป',nextRound);
+ }else{
+   // Wrong answer: explain the actual picture and let the child try again.
+   showGameAlert('💛','ลองดูอีกครั้งนะ',`นี้คือ ${currentQuizItem.shown.label}`,null,'ลองใหม่');
+ }
+}
+
+/* FEEDING */
+function setupFeedingRound(){
+ const item=feedRounds[(currentLevel-1)*5+(currentRound-1)];currentFeedRound=item;
+ document.getElementById('want-img-1').textContent=item.wants[0].emoji;document.getElementById('want-img-2').textContent=item.wants[1].emoji;
+ document.getElementById('food-img').textContent=item.target.emoji;
+ document.getElementById('char-1').classList.remove('target');document.getElementById('char-2').classList.remove('target');
+ const targetIndex=item.wants[0].emoji===item.target.emoji?1:2;document.getElementById(`char-${targetIndex}`).classList.add('target');
+ resetFoodPosition();makeDots('feed-dots');initDragAndDrop();
+}
+function resetFoodPosition(){const f=document.getElementById('active-food');f.style.position='absolute';f.style.left='50%';f.style.top='50%';f.style.transform='translate(-50%,-50%)';f.classList.remove('dragging')}
+function initDragAndDrop(){
+ const f=document.getElementById('active-food');if(dragCleanup)dragCleanup();let dragging=false,sx=0,sy=0,sl=0,st=0;
+ const down=e=>{e.preventDefault();dragging=true;f.classList.add('dragging');const p=e.touches?e.touches[0]:e;const r=f.getBoundingClientRect(),pr=document.getElementById('active-food').parentElement.getBoundingClientRect();sx=p.clientX;sy=p.clientY;sl=r.left-pr.left;st=r.top-pr.top;f.style.position='absolute';f.style.transform='none';f.style.left=sl+'px';f.style.top=st+'px'};
+ const move=e=>{if(!dragging)return;const p=e.touches?e.touches[0]:e;f.style.left=(sl+p.clientX-sx)+'px';f.style.top=(st+p.clientY-sy)+'px'};
+ const up=()=>{if(!dragging)return;dragging=false;f.classList.remove('dragging');const fr=f.getBoundingClientRect(),c1=document.getElementById('char-1').getBoundingClientRect(),c2=document.getElementById('char-2').getBoundingClientRect();let target=overlap(fr,c1)?1:overlap(fr,c2)?2:null;const correct=target===((currentFeedRound.wants[0].emoji===currentFeedRound.target.emoji)?1:2);if(correct){nextRound();}else{showGameAlert('💛','ลองอีกครั้ง','ดูอาหารที่แสดง แล้วหาคนที่ต้องการอาหารชนิดนั้น',null,'ลองใหม่',resetFoodPosition)}};
+ f.onmousedown=down;f.ontouchstart=down;document.addEventListener('mousemove',move);document.addEventListener('touchmove',move,{passive:false});document.addEventListener('mouseup',up);document.addEventListener('touchend',up);dragCleanup=()=>{document.removeEventListener('mousemove',move);document.removeEventListener('touchmove',move);document.removeEventListener('mouseup',up);document.removeEventListener('touchend',up)}
+}
+function overlap(a,b){return !(a.right<b.left+25||a.left>b.right-25||a.bottom<b.top+25||a.top>b.bottom-25)}
+</script>
+</body>
+</html>
