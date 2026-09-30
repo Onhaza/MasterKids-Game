@@ -376,7 +376,7 @@ function showGameAlert(icon,title,message='',stars=null,button='ต่อไป'
  document.getElementById('modal-replay-btn').style.display='none';
  document.getElementById('game-modal').style.display='flex'; modalCallback=callback;
 }
-function showTimedGameAlert(icon,title,message='',seconds=5,callback=null){
+function showTimedGameAlert(icon,title,message='',seconds=5,callback=null,countdownPrefix='ต่อไปใน'){
  if(modalTimer){clearInterval(modalTimer);modalTimer=null;}
  const countdown=document.getElementById('modal-countdown');
  document.getElementById('modal-icon').textContent=icon;
@@ -390,7 +390,7 @@ function showTimedGameAlert(icon,title,message='',seconds=5,callback=null){
  modalCallback=callback;
  let remaining=seconds;
  countdown.style.display='block';
- countdown.textContent=`ต่อไปใน ${remaining} วินาที`;
+ countdown.textContent=`${countdownPrefix} ${remaining} วินาที`;
  modalTimer=setInterval(()=>{
    remaining--;
    if(remaining<=0){
@@ -400,7 +400,7 @@ function showTimedGameAlert(icon,title,message='',seconds=5,callback=null){
      document.getElementById('game-modal').style.display='none';
      if(cb)cb();
    }else{
-     countdown.textContent=`ต่อไปใน ${remaining} วินาที`;
+     countdown.textContent=`${countdownPrefix} ${remaining} วินาที`;
    }
  },1000);
 }
@@ -547,7 +547,7 @@ function handleMatchDrop(source,target){
  }else{
    matchingWrongAttempts++;
    wrongAttempts.matching[currentLevel-1]=matchingWrongAttempts;
-   showGameAlert('💛','ลองอีกครั้ง','',null,'ลองใหม่');
+   showTimedGameAlert('💛','ลองอีกครั้งนะ!','',3,null,'ลองอีกครั้งใน');
  }
 }
 function drawConnectionLine(a,b){
@@ -614,7 +614,7 @@ function initDragAndDrop(){
  const f=document.getElementById('active-food');if(dragCleanup)dragCleanup();let dragging=false,sx=0,sy=0,sl=0,st=0;
  const down=e=>{e.preventDefault();dragging=true;f.classList.add('dragging');const p=e.touches?e.touches[0]:e;const r=f.getBoundingClientRect(),pr=document.getElementById('active-food').parentElement.getBoundingClientRect();sx=p.clientX;sy=p.clientY;sl=r.left-pr.left;st=r.top-pr.top;f.style.position='absolute';f.style.transform='none';f.style.left=sl+'px';f.style.top=st+'px'};
  const move=e=>{if(!dragging)return;const p=e.touches?e.touches[0]:e;f.style.left=(sl+p.clientX-sx)+'px';f.style.top=(st+p.clientY-sy)+'px'};
- const up=()=>{if(!dragging)return;dragging=false;f.classList.remove('dragging');const fr=f.getBoundingClientRect(),c1=document.getElementById('char-1').getBoundingClientRect(),c2=document.getElementById('char-2').getBoundingClientRect();let target=overlap(fr,c1)?1:overlap(fr,c2)?2:null;const correct=target===((currentFeedRound.wants[0].emoji===currentFeedRound.target.emoji)?1:2);if(correct){nextRound();}else{wrongAttempts.feeding[currentLevel-1]++;showGameAlert('💛','ลองอีกครั้ง','ดูอาหารที่แสดง แล้วหาคนที่ต้องการอาหารชนิดนั้น',null,'ลองใหม่',resetFoodPosition)}};
+ const up=()=>{if(!dragging)return;dragging=false;f.classList.remove('dragging');const fr=f.getBoundingClientRect(),c1=document.getElementById('char-1').getBoundingClientRect(),c2=document.getElementById('char-2').getBoundingClientRect();let target=overlap(fr,c1)?1:overlap(fr,c2)?2:null;const correct=target===((currentFeedRound.wants[0].emoji===currentFeedRound.target.emoji)?1:2);if(correct){nextRound();}else{wrongAttempts.feeding[currentLevel-1]++;showTimedGameAlert('💛','ลองอีกครั้งนะ!','ดูอาหารที่แสดง แล้วหาคนที่ต้องการอาหารชนิดนั้น',3,resetFoodPosition,'ลองอีกครั้งใน');}};
  f.onmousedown=down;f.ontouchstart=down;document.addEventListener('mousemove',move);document.addEventListener('touchmove',move,{passive:false});document.addEventListener('mouseup',up);document.addEventListener('touchend',up);dragCleanup=()=>{document.removeEventListener('mousemove',move);document.removeEventListener('touchmove',move);document.removeEventListener('mouseup',up);document.removeEventListener('touchend',up)}
 }
 function overlap(a,b){return !(a.right<b.left+25||a.left>b.right-25||a.bottom<b.top+25||a.top>b.bottom-25)}
