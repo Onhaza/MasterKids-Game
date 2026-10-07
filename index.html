@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>MASTERKIDS – เกมการเรียนรู้สำหรับเด็ก</title>
+<style>
+*{box-sizing:border-box;user-select:none;-webkit-user-select:none;font-family:"Sarabun","Noto Sans Thai","Segoe UI",sans-serif;-webkit-tap-highlight-color:transparent}
+:root{
+  --ink:#354052;--muted:#6d7788;--blue:#62b7f4;--blue2:#dff3ff;
+  --mint:#79d6bd;--mint2:#e2f8f1;--yellow:#ffd76a;--yellow2:#fff5ce;
+  --peach:#ffae91;--peach2:#fff0ea;--lav:#bba9ef;--lav2:#f0ebff;
+  --green:#55c48a;--red:#ef767a;--white:#fff;--shadow:0 10px 28px rgba(66,82,110,.14)
+}
+html, body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background: #e9f8ff;
+  position: fixed;
+}
+body{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:var(--ink)
+}
+#game-container{
+  width: 100vw;
+  height: 100dvh;
+  max-width: 1280px;
+  max-height: 850px;
+  background:#fff;
+  border-radius: 0;
+  box-shadow: 0 15px 40px rgba(58,76,105,.18);
+  position:relative;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+}
+@media (min-width: 900px) and (min-height: 550px) {
+  #game-container {
+    width: 96vw;
+    height: 94vh;
+    border-radius: 28px;
+    border: 5px solid #fff;
+  }
+}
+
+/* Emoji SVG Renderer Support */
+.emoji-icon {
+  width: 1em;
+  height: 1em;
+  display: inline-block;
+  vertical-align: -0.125em;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+/* Top Navigation Bar */
+.top-bar{
+  height: clamp(52px, 8vh, 64px);
+  flex:none;
+  background:rgba(255,255,255,.96);
+  border-bottom:2px solid #edf0f5;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 clamp(10px, 2.5vw, 22px);
+  z-index:40
+}
+.nav-group{display:flex;gap:8px;align-items:center}
+.bar-btn{
+  border:0;
+  border-radius:14px;
+  padding:8px 13px;
+  font-size:clamp(13px, 1.6vw, 15px);
+  font-weight:800;
+  color:var(--ink);
+  background:#f1f5f9;
+  cursor:pointer;
+  box-shadow:0 3px 0 #dfe5ed;
+  transition:.15s;
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+}
+.bar-btn:active{transform:translateY(2px);box-shadow:0 1px 0 #dfe5ed}
+.btn-exit{background:#fff0ef;color:#c85b60;box-shadow:0 3px 0 #f1cecc}
+.bar-title{font-size:clamp(15px, 2.3vw, 20px);font-weight:900;letter-spacing:.5px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.round-indicator{font-size:clamp(11px, 1.4vw, 14px);font-weight:900;background:var(--yellow2);color:#9a7414;border-radius:12px;padding:6px 12px;border:2px solid #f8df91;white-space:nowrap}
+
+/* Lang Toggle Button */
+.lang-btn {
+  background: #f0ebff;
+  color: #6b52b6;
+  box-shadow: 0 3px 0 #d5c8f8;
+  font-weight: 900;
+  padding: 6px 11px;
+  border-radius: 12px;
+}
+
+/* Home Page Language Selector */
+.home-lang-selector {
+  display: flex;
+  gap: 12px;
+  margin-top: 18px;
+  z-index: 2;
+}
+.btn-lang-option {
+  border: 2px solid #e2e8f0;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 8px 16px;
+  font-size: clamp(14px, 2vw, 16px);
+  font-weight: 800;
+  color: var(--ink);
+  cursor: pointer;
+  box-shadow: 0 4px 0 #cbd5e1;
+  transition: 0.15s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.btn-lang-option:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 #cbd5e1;
+}
+.btn-lang-option.active {
+  border-color: #62b7f4;
+  background: #e0f2fe;
+  color: #0284c7;
+  box-shadow: 0 4px 0 #93c5fd;
+}
+
+/* Screen base */
+.screen{flex:1;display:none;position:relative;min-height:0;width:100%;height:100%}.screen.active{display:flex}
+
+/* Start Screen */
+#start-screen{background:radial-gradient(circle at 15% 15%,#fff 0 8%,transparent 9%),linear-gradient(135deg,#dff5ff,#eefcf7 55%,#fff5d8);flex-direction:column;align-items:center;justify-content:center;overflow:hidden;position:relative}
+#start-screen:before{content:"";position:absolute;width:280px;height:280px;background:#c9ecff;left:-90px;top:-80px;border-radius:50%;opacity:.55;pointer-events:none}
+.start-decor{position:absolute;opacity:.65;pointer-events:none}.d1{left:8%;bottom:15%;font-size:52px}.d2{right:8%;top:15%;font-size:52px}.d3{right:14%;bottom:9%;font-size:52px}
+.logo-title{font-size:clamp(46px, 9vw, 76px);line-height:1;font-weight:1000;color:#466178;letter-spacing:2px;text-shadow:0 5px #cfe6f5;z-index:2}
+.logo-sub{font-size:clamp(16px, 2.5vw, 24px);font-weight:800;color:#7a8798;letter-spacing:2px;margin:10px 0 25px;z-index:2;text-align:center}
+.btn-start{width:clamp(190px, 45vw, 240px);height:clamp(56px, 9vh, 72px);border:0;border-radius:24px;background:var(--yellow);color:#705817;font-size:clamp(22px, 4.5vw, 28px);font-weight:1000;cursor:pointer;box-shadow:0 8px 0 #e8bc42,0 14px 25px rgba(100,85,30,.16);z-index:2;transition:.15s}.btn-start:active{transform:translateY(4px);box-shadow:0 4px 0 #e8bc42}
+.start-lang-switcher{position:absolute;top:18px;right:18px;z-index:10;display:flex;gap:8px}
+
+/* Home Screen */
+#home-screen{background:radial-gradient(circle at 8% 12%,rgba(255,215,106,.28) 0 9%,transparent 10%),radial-gradient(circle at 92% 18%,rgba(121,214,189,.25) 0 11%,transparent 12%),linear-gradient(135deg,#eef9ff 0%,#f8fbff 48%,#f1fcf7 100%);flex-direction:column;align-items:center;justify-content:center;gap:clamp(12px, 3vh, 24px);overflow:hidden;isolation:isolate;padding:15px}
+.section-title{font-size:clamp(22px, 4vw, 34px);font-weight:1000;color:#43556b;letter-spacing:.2px;text-shadow:0 2px 0 #fff;z-index:2;text-align:center}
+.menu-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(10px, 2vw, 20px);width:min(880px,94%);z-index:2}
+.menu-card{min-height:clamp(150px, 25vh, 220px);background:#fff;border-radius:24px;border:2px solid rgba(232,238,244,.95);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 10px 24px rgba(66,82,110,.11);transition:transform .2s,box-shadow .2s,border-color .2s;position:relative;overflow:hidden;padding:16px;text-align:center}
+.menu-card:hover{transform:translateY(-5px) scale(1.01);box-shadow:0 16px 32px rgba(66,82,110,.16)}
+.menu-card:nth-child(1){background:linear-gradient(160deg,#fff 35%,#eaf7ff)}
+.menu-card:nth-child(2){background:linear-gradient(160deg,#fff 35%,#fff7dc)}
+.menu-card:nth-child(3){background:linear-gradient(160deg,#fff 35%,#eafaf4)}
+.menu-art{width:clamp(65px, 10vw, 105px);height:clamp(65px, 10vw, 105px);border-radius:28px;display:flex;align-items:center;justify-content:center;font-size:clamp(40px, 6vw, 65px);margin-bottom:12px;box-shadow:inset 0 -5px 0 rgba(0,0,0,.035),0 6px 15px rgba(66,82,110,.08)}
+.menu-card:nth-child(1) .menu-art{background:#dff3ff}
+.menu-card:nth-child(2) .menu-art{background:#fff1bd}
+.menu-card:nth-child(3) .menu-art{background:#dff7ee}
+.menu-card span{font-size:clamp(16px, 2.2vw, 22px);font-weight:1000;color:#405168}
+
+/* Level Screen */
+#level-screen{background:#f7fafc;flex-direction:column;align-items:center;justify-content:center;padding:clamp(16px, 4vh, 32px);overflow-y:auto}
+.level-container-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: min(850px, 96%);
+  margin: auto;
+}
+.level-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(12px, 2vw, 18px);margin-top:20px;width:100%}
+.level-card{height:clamp(85px, 14vh, 115px);background:#fff;border:2px solid #e8edf3;border-radius:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 5px 14px rgba(66,82,110,.07);transition:.15s}
+.level-card:hover{transform:translateY(-3px);border-color:#c8ddea}
+.level-num{font-size:clamp(16px, 2.5vw, 22px);font-weight:1000;color:#405168}
+.level-stars{color:#e7ad32;font-size:clamp(14px, 2vw, 18px);margin-top:4px}
+
+/* Game Shared Elements */
+.game-bg{background:#f8fbfd}
+.progress-dots{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);display:flex;gap:6px;z-index:30}
+.progress-dot{width:9px;height:9px;border-radius:50%;background:#dbe2ea;transition:.2s}
+.progress-dot.active{background:#6abbe9;transform:scale(1.3)}
+.progress-dot.done{background:#77cfad}
+
+/* Matching Screen */
+#matching-screen{flex-direction:row;justify-content:space-between;align-items:center;padding:clamp(12px, 3vh, 30px) clamp(15px, 6vw, 70px) clamp(25px, 4vh, 40px);background:linear-gradient(135deg,#eff9ff,#f7fffb);overflow:hidden;position:relative}
+#matching-screen canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:10}
+.column{display:flex;flex-direction:column;justify-content:space-around;height:calc(100% - 20px);z-index:20;width:clamp(110px, 22vw, 190px);gap:6px}
+.match-item{width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;position:relative}
+.match-label-outside{font-size:clamp(11px, 1.4vw, 15px);font-weight:1000;color:#42536a;text-align:center;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.match-card{width:100%;height:clamp(55px, 10.5vh, 85px);background:#fff;border-radius:18px;border:3px solid #e9eef4;display:flex;justify-content:center;align-items:center;cursor:pointer;position:relative;box-shadow:0 6px 16px rgba(66,82,110,.09);transition:.15s}
+.match-card:hover{transform:scale(1.02)}
+.match-card.selected{border-color:var(--yellow);background:#fffaf0;transform:scale(1.04)}
+.match-card.matched{border-color:var(--green);background:#f0fff7;cursor:default}
+.match-card .visual{font-size:clamp(32px, 6vw, 55px);display:flex;align-items:center;justify-content:center;width:100%;height:100%}
+.match-dot{width:13px;height:13px;background:#b9c7d5;border:3px solid #fff;border-radius:50%;position:absolute;top:50%;transform:translateY(-50%)}
+.column.left .match-dot{right:-12px}
+.column.right .match-dot{left:-12px}
+
+/* Quiz Screen */
+#quiz-screen{flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,#fff9e4,#fff);padding:20px;position:relative}
+.quiz-question{font-size:clamp(20px, 3.8vw, 30px);max-width:90%;min-height:50px;display:flex;align-items:center;justify-content:center;font-weight:1000;text-align:center;margin-bottom:15px;color:#405168}
+.quiz-image-container{width:clamp(160px, 28vw, 230px);height:clamp(160px, 28vw, 230px);background:#fff;border:3px solid #f0e7c7;border-radius:30px;display:flex;align-items:center;justify-content:center;box-shadow:0 12px 26px rgba(93,82,40,.09);font-size:clamp(80px, 14vw, 130px)}
+.quiz-hint{font-size:clamp(12px, 1.6vw, 14px);color:var(--muted);margin:12px 0 16px;text-align:center}
+.quiz-buttons{display:flex;gap:18px}
+.btn-answer{width:clamp(115px, 22vw, 160px);height:clamp(50px, 8vh, 62px);border:0;border-radius:18px;font-size:clamp(18px, 2.5vw, 23px);font-weight:1000;color:#fff;cursor:pointer;box-shadow:0 5px 0 rgba(0,0,0,.12);transition:.12s;display:flex;align-items:center;justify-content:center;gap:6px}
+.btn-answer:active{transform:translateY(3px);box-shadow:0 2px 0 rgba(0,0,0,.12)}
+.btn-no{background:#ef767a}.btn-yes{background:#55c48a}
+
+/* Feeding Screen */
+#feeding-screen{background:linear-gradient(180deg,#eefaf7,#f9fcfb);flex-direction:column;align-items:center;justify-content:space-between;padding:clamp(12px, 2.5vh, 25px) 15px clamp(20px, 3.5vh, 30px);position:relative;overflow:hidden}
+.feed-title{background:rgba(255,255,255,.9);padding:8px 18px;border-radius:999px;box-shadow:0 5px 16px rgba(66,82,110,.08);color:#526276;z-index:20;font-size:clamp(13px, 2vw, 18px);font-weight:900;text-align:center;max-width:92%}
+.characters-container{display:flex;justify-content:space-around;align-items:flex-end;width:100%;flex:1;max-height:340px;gap:10px;padding:0 clamp(5px, 4vw, 50px);z-index:5}
+.character-card{display:flex;flex-direction:column;align-items:center;position:relative;width:clamp(135px, 30vw, 250px);height:100%;justify-content:flex-end;padding-bottom:5px}
+.thought-bubble{position:absolute;top:0;left:50%;transform:translateX(-50%);width:clamp(85px, 15vw, 130px);height:clamp(65px, 11vw, 90px);background:#fff;border:3px solid #eef1f5;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(66,82,110,.1);z-index:12}
+.want-food{font-size:clamp(36px, 7vw, 58px);display:flex;align-items:center;justify-content:center;width:100%;height:100%}
+.target-ring{position:absolute;top:54%;left:50%;transform:translate(-50%,-50%);width:clamp(130px, 24vw, 210px);height:clamp(130px, 24vw, 210px);border:4px dashed #6fcfb0;border-radius:50%;background:rgba(121,214,189,.07);z-index:1;pointer-events:none}
+.char-illustration{position:relative;z-index:4;width:clamp(90px, 16vw, 140px);height:clamp(90px, 16vw, 140px);display:flex;align-items:center;justify-content:center;font-size:clamp(65px, 11vw, 105px);filter:drop-shadow(0 6px 4px rgba(66,82,110,.12))}
+.character-card.target .target-ring{border-color:#58c69f;background:rgba(121,214,189,.15);box-shadow:0 0 0 5px rgba(121,214,189,.08)}
+.npc-name{position:relative;z-index:15;margin-top:2px;background:#fff;padding:4px 11px;border-radius:999px;color:#526276;font-size:clamp(12px, 1.8vw, 16px);font-weight:900;box-shadow:0 3px 10px rgba(66,82,110,.08);white-space:nowrap}
+.npc-request{position:relative;z-index:16;margin-top:3px;background:#fffdf3;border:2px solid #f4df9a;color:#7d6a2a;padding:3px 9px;border-radius:12px;font-size:clamp(10px, 1.4vw, 13px);font-weight:900;line-height:1.15;box-shadow:0 3px 8px rgba(66,82,110,.06);text-align:center;white-space:nowrap}
+.food-tray{position:relative;width:min(240px, 50vw);height:clamp(60px, 10vh, 75px);display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.85);border:2px solid #edf1f5;border-radius:26px;box-shadow:0 6px 16px rgba(66,82,110,.08);z-index:30;flex:none}
+.draggable-food{position:absolute!important;left:50%;top:50%;transform:translate(-50%,-50%)!important;width:clamp(60px, 10vw, 80px);height:clamp(60px, 10vw, 80px);background:#fff;border:3px solid #f2c85b;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 14px rgba(66,82,110,.15);cursor:grab;touch-action:none;z-index:50}
+.draggable-food.dragging{cursor:grabbing;box-shadow:0 10px 22px rgba(66,82,110,.22);transform:scale(1.08)!important}
+.food-visual{font-size:clamp(36px, 6vw, 52px);display:flex;align-items:center;justify-content:center}
+
+/* Game Modal Dialog */
+#game-modal{position:fixed;inset:0;background:rgba(48,60,76,.38);display:none;justify-content:center;align-items:center;z-index:99999;backdrop-filter:blur(3px);padding:15px}
+.modal-box{background:#fff;border-radius:26px;padding:clamp(18px, 4vw, 28px);text-align:center;box-shadow:0 16px 40px rgba(40,50,70,.22);border:3px solid #edf0f5;width:min(92%, 420px);animation:pop .2s ease}
+.modal-icon{font-size:clamp(38px, 6vw, 50px);margin-bottom:4px}
+.modal-title{font-size:clamp(20px, 3.5vw, 25px);font-weight:1000;color:#354052}
+.modal-message{font-size:clamp(13px, 1.8vw, 15px);color:var(--muted);margin:8px 0 12px;line-height:1.55;white-space:pre-line}
+.modal-countdown{font-size:clamp(14px, 2.2vw, 18px);font-weight:1000;color:#6b7a8e;margin-top:8px}
+.modal-stars{font-size:clamp(26px, 4.5vw, 34px);color:#e9b339;margin-bottom:10px}
+.modal-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+.modal-btn{background:#67bce9;border:0;color:#fff;font-size:clamp(14px, 2.2vw, 17px);font-weight:900;padding:10px 18px;border-radius:15px;cursor:pointer;box-shadow:0 4px 0 #4b9fc8}
+.modal-secondary{background:#79d6bd;box-shadow:0 4px 0 #52b89c}
+.modal-exit{background:#ef767a;box-shadow:0 4px 0 #d85c61}
+.modal-btn:active{transform:translateY(2px);box-shadow:0 2px 0 #4b9fc8}
+@keyframes pop{from{transform:scale(.9);opacity:0}to{transform:scale(1);opacity:1}}
+
+@media(max-width:680px){
+  .menu-grid{grid-template-columns:1fr;width:min(360px, 92%)}
+  .menu-card{min-height:85px;flex-direction:row;justify-content:flex-start;text-align:left;padding:12px 20px;gap:18px}
+  .menu-art{margin-bottom:0;width:55px;height:55px;font-size:32px;flex:none}
+  .level-grid{grid-template-columns:repeat(3,1fr)}
+  .characters-container{padding:0}
+  .character-card{width:46vw}
+}
+</style>
+</head>
+<body>
+<div id="game-container">
+  <!-- Top Bar -->
+  <div class="top-bar" id="top-bar" style="display:none">
+    <div class="nav-group">
+      <button class="bar-btn" onclick="handleBack()"><span id="txt-back">← ย้อนกลับ</span></button>
+      <button class="bar-btn btn-exit" id="btn-exit" onclick="confirmExit()"><span id="txt-exit">ออกจากเกม</span></button>
+    </div>
+    <div class="bar-title" id="bar-title">MASTERKIDS</div>
+    <div class="nav-group">
+      <button class="bar-btn lang-btn" onclick="toggleLanguage()"><span id="txt-lang-toggle">EN</span></button>
+      <div class="round-indicator" id="round-indicator">รอบ 1/5</div>
+    </div>
+  </div>
+
+  <!-- Start Screen -->
+  <div id="start-screen" class="screen active">
+    <div class="start-lang-switcher">
+      <button class="bar-btn lang-btn" onclick="toggleLanguage()"><span id="txt-start-lang">EN / TH</span></button>
+    </div>
+    <span class="start-decor d1" data-emoji="🌿"></span>
+    <span class="start-decor d2" data-emoji="☁️"></span>
+    <span class="start-decor d3" data-emoji="🌈"></span>
+    <div class="logo-title">MASTERKIDS</div>
+    <div class="logo-sub" id="logo-sub-text">เกมการเรียนรู้สำหรับเด็ก</div>
+    <button class="btn-start" onclick="showScreen('home-screen')"><span id="txt-start">START</span></button>
+    
+    <div class="home-lang-selector">
+      <button class="btn-lang-option" id="lang-btn-th" onclick="setLanguage('th')">
+        <span data-emoji="🇹🇭"></span> ไทย
+      </button>
+      <button class="btn-lang-option" id="lang-btn-en" onclick="setLanguage('en')">
+        <span data-emoji="🇬🇧"></span> English
+      </button>
+    </div>
+  </div>
+
+  <!-- Home Screen -->
+  <div id="home-screen" class="screen">
+    <div class="section-title" id="txt-select-game">เลือกเกมที่ต้องการเล่น</div>
+    <div class="menu-grid">
+      <div class="menu-card" onclick="selectGame('matching')">
+        <div class="menu-art" data-emoji="🐰"></div>
+        <span>MATCHING</span>
+      </div>
+      <div class="menu-card" onclick="selectGame('quiz')">
+        <div class="menu-art" data-emoji="❓"></div>
+        <span>YES OR NO</span>
+      </div>
+      <div class="menu-card" onclick="selectGame('feeding')">
+        <div class="menu-art" data-emoji="🍎"></div>
+        <span>WHAT I EAT?</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Level Screen -->
+  <div id="level-screen" class="screen">
+    <div class="level-container-box">
+      <div class="section-title" id="level-menu-title">เลือกด่าน</div>
+      <div class="level-grid" id="level-grid"></div>
+    </div>
+  </div>
+
+  <!-- Matching Game Screen -->
+  <div id="matching-screen" class="screen game-bg">
+    <canvas id="line-canvas"></canvas>
+    <div class="column left" id="left-column"></div>
+    <div class="column right" id="right-column"></div>
+    <div class="progress-dots" id="match-dots"></div>
+  </div>
+
+  <!-- Quiz Game Screen -->
+  <div id="quiz-screen" class="screen">
+    <div class="quiz-question" id="quiz-question"></div>
+    <div class="quiz-image-container" id="quiz-img"></div>
+    <div class="quiz-hint" id="txt-quiz-hint">ดูภาพให้ดี แล้วเลือกคำตอบ</div>
+    <div class="quiz-buttons">
+      <button class="btn-answer btn-no" onclick="answerQuiz(false)"><span id="txt-no">✕ ไม่ใช่</span></button>
+      <button class="btn-answer btn-yes" onclick="answerQuiz(true)"><span id="txt-yes">✓ ใช่</span></button>
+    </div>
+    <div class="progress-dots" id="quiz-dots"></div>
+  </div>
+
+  <!-- Feeding Game Screen -->
+  <div id="feeding-screen" class="screen">
+    <div class="feed-title" id="txt-feed-instruction">🍽️ นำอาหารที่เห็นไปให้เพื่อนที่ต้องการอาหารชนิดนั้น</div>
+    <div class="characters-container">
+      <div class="character-card" id="char-1">
+        <div class="thought-bubble"><div class="want-food" id="want-img-1"></div></div>
+        <div class="target-ring"></div>
+        <div class="char-illustration npc1" data-emoji="🐻"></div>
+        <div class="npc-name" id="txt-npc1-name">น้องหมี</div>
+        <div class="npc-request" id="want-label-1">อยากกิน...</div>
+      </div>
+      <div class="character-card" id="char-2">
+        <div class="thought-bubble"><div class="want-food" id="want-img-2"></div></div>
+        <div class="target-ring"></div>
+        <div class="char-illustration npc2" data-emoji="🐰"></div>
+        <div class="npc-name" id="txt-npc2-name">น้องกระต่าย</div>
+        <div class="npc-request" id="want-label-2">อยากกิน...</div>
+      </div>
+    </div>
+    <div class="food-tray">
+      <div class="draggable-food" id="active-food">
+        <div class="food-visual" id="food-img"></div>
+      </div>
+    </div>
+    <div class="progress-dots" id="feed-dots"></div>
+  </div>
+
+  <!-- Modal Component -->
+  <div id="game-modal">
+    <div class="modal-box">
+      <div class="modal-icon" id="modal-icon">🎉</div>
+      <div class="modal-title" id="modal-title">เก่งมาก!</div>
+      <div class="modal-message" id="modal-message"></div>
+      <div class="modal-countdown" id="modal-countdown" style="display:none"></div>
+      <div class="modal-stars" id="modal-stars" style="display:none">★★★</div>
+      <div class="modal-actions">
+        <button class="modal-btn" id="modal-btn" onclick="closeModal()">ต่อไป</button>
+        <button class="modal-btn modal-secondary" id="modal-secondary-btn" style="display:none" onclick="closeModal()">เลือกด่าน</button>
+        <button class="modal-btn modal-exit" id="modal-replay-btn" style="display:none" onclick="closeModal()">เล่นอีกครั้ง</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* Universal Cross-Platform Emoji Image Engine (Twemoji) */
+function getEmojiUrl(emoji) {
+  const codePoints = Array.from(emoji)
+    .map(char => char.codePointAt(0).toString(16))
+    .filter(code => code !== 'fe0f')
+    .join('-');
+  return `https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/${codePoints}.svg`;
+}
+
+function renderEmojiHTML(emoji, className = 'emoji-icon') {
+  if (!emoji) return '';
+  const url = getEmojiUrl(emoji);
+  return `<img class="${className}" src="${url}" alt="${emoji}" draggable="false" onerror="this.style.display='none'" />`;
+}
+
+function renderAllStaticEmojis() {
+  document.querySelectorAll('[data-emoji]').forEach(el => {
+    const emoji = el.getAttribute('data-emoji');
+    el.innerHTML = renderEmojiHTML(emoji);
+  });
+}
+
+/* System Language State & Localization Strings */
+let currentLang = 'th';
+
+const I18N = {
+  th: {
+    logoSub: "เกมการเรียนรู้สำหรับเด็ก",
+    back: "← ย้อนกลับ",
+    exit: "ออกจากเกม",
+    start: "START",
+    selectGame: "เลือกเกมที่ต้องการเล่น",
+    selectLevel: "เลือกด่าน",
+    levelPrefix: "ด่าน",
+    roundPrefix: "รอบ",
+    quizHint: "ดูภาพให้ดี แล้วเลือกคำตอบ",
+    yes: "✓ ใช่",
+    no: "✕ ไม่ใช่",
+    feedInstruction: "🍽️ นำอาหารที่เห็นไปให้เพื่อนที่ต้องการอาหารชนิดนั้น",
+    npc1: "น้องหมี",
+    npc2: "น้องกระต่าย",
+    wantToEat: "อยากกิน",
+    goodJob: "เก่งมาก!",
+    tryAgain: "ลองอีกครั้งนะ!",
+    roundCompleted: "ผ่านด่านแล้ว!",
+    matchingWinMsg: "จับคู่สัตว์กับอาหารครบแล้ว!",
+    quizWinMsg: "ตอบครบทุกข้อแล้ว!",
+    feedingWinMsg: "ส่งอาหารครบทุกรอบได้ดีมาก!",
+    starsExcellent: "เก่งมาก! ทำได้ยอดเยี่ยม 🌟",
+    starsGood: "เก่งมาก! ลองอีกนิดนะ 💛",
+    starsNice: "เยี่ยมมากที่พยายามจนสำเร็จ! 💚",
+    next: "ต่อไป",
+    replay: "เล่นอีกครั้ง",
+    exitDialogTitle: "ออกจากเกม?",
+    exitDialogMsg: "",
+    confirm: "ตกลง",
+    cancel: "ยกเลิก",
+    countDownPrefix: "ต่อไปใน",
+    tryAgainCountDown: "ลองอีกครั้งใน",
+    isThis: "นี่คือ",
+    rightAnswerIs: "ตอบถูกต้อง ใช่แล้ว นี่คือ",
+    wrongAnswerIs: "คำตอบถูกต้อง นี่ไม่ใช่",
+    called: "ที่เรียกว่า",
+    isItQuestion: "ใช่หรือไม่?",
+    quizTryAgainMsg: "เอ๊ะ ดูดีๆ นี่คือ {item} หรือเปล่านะ? 😉"
+  },
+  en: {
+    logoSub: "LEARNING GAME FOR KIDS",
+    back: "← Back",
+    exit: "Exit Game",
+    start: "START",
+    selectGame: "Choose Game Mode",
+    selectLevel: "Select Level",
+    levelPrefix: "Level",
+    roundPrefix: "Round",
+    quizHint: "Look carefully and choose your answer",
+    yes: "✓ YES",
+    no: "✕ NO",
+    feedInstruction: "🍽️ Drag the food to the friend who wants it!",
+    npc1: "Teddy Bear",
+    npc2: "Bunny",
+    wantToEat: "Wants",
+    goodJob: "Great Job!",
+    tryAgain: "Try Again!",
+    roundCompleted: "Level Cleared!",
+    matchingWinMsg: "You matched all animals with their food!",
+    quizWinMsg: "You answered all questions correctly!",
+    feedingWinMsg: "You fed all your hungry friends!",
+    starsExcellent: "Awesome! Outstanding job 🌟",
+    starsGood: "Great effort! Almost perfect 💛",
+    starsNice: "Wonderful! You made it 💚",
+    next: "Next",
+    replay: "Play Again",
+    exitDialogTitle: "Exit Game?",
+    exitDialogMsg: "",
+    confirm: "OK",
+    cancel: "Cancel",
+    countDownPrefix: "Next in",
+    tryAgainCountDown: "Try again in",
+    isThis: "Is this a",
+    rightAnswerIs: "Correct! Yes, this is a",
+    wrongAnswerIs: "Correct! This is not a",
+    called: "It is a",
+    isItQuestion: "?",
+    quizTryAgainMsg: "Oops! Take another look. Is this a {item}? 😉"
+  }
+};
+
+function setLanguage(lang) {
+  currentLang = lang;
+  updateLanguageUI();
+  if (currentScreenState === 'level-screen') renderLevelGrid();
+  if (currentScreenState === 'quiz-screen' && currentQuizItem) setupQuizRound();
+  if (currentScreenState === 'feeding-screen' && currentFeedRound) setupFeedingRound();
+  if (currentScreenState === 'matching-screen') setupMatchingRound();
+}
+
+function toggleLanguage() {
+  setLanguage(currentLang === 'th' ? 'en' : 'th');
+}
+
+function updateLanguageUI() {
+  const lang = I18N[currentLang];
+  document.getElementById('logo-sub-text').textContent = lang.logoSub;
+  document.getElementById('txt-back').textContent = lang.back;
+  document.getElementById('txt-exit').textContent = lang.exit;
+  document.getElementById('txt-start').textContent = lang.start;
+  document.getElementById('txt-select-game').textContent = lang.selectGame;
+  document.getElementById('txt-quiz-hint').textContent = lang.quizHint;
+  document.getElementById('txt-yes').textContent = lang.yes;
+  document.getElementById('txt-no').textContent = lang.no;
+  document.getElementById('txt-feed-instruction').textContent = lang.feedInstruction;
+  document.getElementById('txt-npc1-name').textContent = lang.npc1;
+  document.getElementById('txt-npc2-name').textContent = lang.npc2;
+  document.getElementById('txt-lang-toggle').textContent = currentLang === 'th' ? 'EN' : 'TH';
+  document.getElementById('txt-start-lang').textContent = currentLang === 'th' ? 'ENGLISH' : 'ภาษาไทย';
+  
+  const levelTitle = document.getElementById('level-menu-title');
+  if (levelTitle) {
+    if (selectedGame) {
+      levelTitle.textContent = `${gameTitle(selectedGame)} • ${lang.selectLevel}`;
+    } else {
+      levelTitle.textContent = lang.selectLevel;
+    }
+  }
+
+  const thBtn = document.getElementById('lang-btn-th');
+  const enBtn = document.getElementById('lang-btn-en');
+  if (thBtn && enBtn) {
+    thBtn.classList.toggle('active', currentLang === 'th');
+    enBtn.classList.toggle('active', currentLang === 'en');
+  }
+  
+  updateHeader();
+}
+
+/* Safe & Compatible Item Collections */
+const V = (emoji, labelTh, labelEn) => ({ emoji, labelTh, labelEn });
+
+const animals = [
+  V('🐶','สุนัข','Dog'), V('🐱','แมว','Cat'), V('🐰','กระต่าย','Rabbit'), V('🦁','สิงโต','Lion'),
+  V('🐘','ช้าง','Elephant'), V('🐼','แพนด้า','Panda'), V('🐵','ลิง','Monkey'), V('🦊','จิ้งจอก','Fox'),
+  V('🐨','โคอาลา','Koala'), V('🐯','เสือ','Tiger'), V('🐸','กบ','Frog'), V('🐧','เพนกวิน','Penguin'),
+  V('🐢','เต่า','Turtle'), V('🦒','ยีราฟ','Giraffe'), V('🐮','วัว','Cow'), V('🐷','หมู','Pig'),
+  V('🐥','ลูกเจี๊ยบ','Chick'), V('🦄','ยูนิคอร์น','Unicorn'), V('🐳','วาฬ','Whale'), V('🐙','หมึก','Octopus'),
+  V('🦋','ผีเสื้อ','Butterfly'), V('🐝','ผึ้ง','Bee'), V('🦓','ม้าลาย','Zebra'), V('🦌','กวาง','Deer'),
+  V('🐿️','กระรอก','Squirrel'), V('🦔','เม่น','Hedgehog'), V('🐹','แฮมสเตอร์','Hamster'), V('🦜','นกแก้ว','Parrot'),
+  V('🐬','โลมา','Dolphin'), V('🦭','แมวน้ำ','Seal'), V('🐫','อูฐ','Camel'), V('🦘','จิงโจ้','Kangaroo')
+].filter(x => x.emoji.length > 0);
+
+const foods = [
+  V('🦴','กระดูก','Bone'), V('🐟','ปลา','Fish'), V('🥕','แครอท','Carrot'), V('🍖','เนื้อ','Meat'),
+  V('🍌','กล้วย','Banana'), V('🍊','ส้ม','Orange'), V('🍒','เชอร์รี่','Cherry'), V('🥭','มะม่วง','Mango'),
+  V('🍎','แอปเปิล','Apple'), V('🍉','แตงโม','Watermelon'), V('🍓','สตรอว์เบอร์รี','Strawberry'),
+  V('🍍','สับปะรด','Pineapple'), V('🍇','องุ่น','Grapes'), V('🥥','มะพร้าว','Coconut'), V('🌽','ข้าวโพด','Corn'),
+  V('🥔','มันฝรั่ง','Potato'), V('🍅','มะเขือเทศ','Tomato'), V('🥦','บรอกโคลี','Broccoli'), V('🥚','ไข่','Egg'),
+  V('🥛','นม','Milk'), V('🍞','ขนมปัง','Bread'), V('🧀','ชีส','Cheese'), V('🍪','คุกกี้','Cookie'),
+  V('🍚','ข้าว','Rice'), V('🥜','ถั่ว','Peanut'), V('🍈','เมลอน','Melon'), V('🍋','เลมอน','Lemon'),
+  V('🍏','แอปเปิลเขียว','Green Apple'), V('🫐','บลูเบอร์รี','Blueberry'), V('🍰','เค้ก','Cake'),
+  V('🥞','แพนเค้ก','Pancake'), V('🍠','มันหวาน','Sweet Potato'), V('🥬','ผักกาด','Lettuce'),
+  V('🍄','เห็ด','Mushroom'), V('🥒','แตงกวา','Cucumber'), V('🍯','น้ำผึ้ง','Honey'),
+  V('🍫','ช็อกโกแลต','Chocolate'), V('🥑','อะโวคาโด','Avocado')
+];
+
+/* Matching Animal-Food Relationship Data */
+const matchingPool = [
+  { animal: ['🐶','สุนัข','Dog'], foods: [['🦴','กระดูก','Bone'], ['🥛','นม','Milk']] },
+  { animal: ['🐱','แมว','Cat'], foods: [['🐟','ปลา','Fish']] },
+  { animal: ['🐰','กระต่าย','Rabbit'], foods: [['🥕','แครอท','Carrot']] },
+  { animal: ['🦁','สิงโต','Lion'], foods: [['🍖','เนื้อ','Meat']] },
+  { animal: ['🐭','หนู','Mouse'], foods: [['🧀','ชีส','Cheese']] },
+  { animal: ['🐵','ลิง','Monkey'], foods: [['🍌','กล้วย','Banana']] },
+  { animal: ['🐘','ช้าง','Elephant'], foods: [['🍌','กล้วย','Banana']] },
+  { animal: ['🐻','หมี','Bear'], foods: [['🍯','น้ำผึ้ง','Honey'], ['🐟','ปลา','Fish']] },
+  { animal: ['🐮','วัว','Cow'], foods: [['🌽','ข้าวโพด','Corn']] },
+  { animal: ['🐷','หมู','Pig'], foods: [['🌽','ข้าวโพด','Corn']] },
+  { animal: ['🐔','ไก่','Chicken'], foods: [['🌽','ข้าวโพด','Corn']] },
+  { animal: ['🐴','ม้า','Horse'], foods: [['🥕','แครอท','Carrot']] },
+  { animal: ['🐢','เต่า','Turtle'], foods: [['🥬','ผักกาด','Lettuce']] },
+  { animal: ['🐿️','กระรอก','Squirrel'], foods: [['🥜','ถั่ว','Peanut']] },
+  { animal: ['🐝','ผึ้ง','Bee'], foods: [['🍯','น้ำผึ้ง','Honey']] },
+  { animal: ['🐧','เพนกวิน','Penguin'], foods: [['🐟','ปลา','Fish']] },
+  { animal: ['🐬','โลมา','Dolphin'], foods: [['🐟','ปลา','Fish']] },
+  { animal: ['🦭','แมวน้ำ','Seal'], foods: [['🐟','ปลา','Fish']] },
+  { animal: ['🦊','จิ้งจอก','Fox'], foods: [['🍖','เนื้อ','Meat']] },
+  { animal: ['🐯','เสือ','Tiger'], foods: [['🍖','เนื้อ','Meat']] },
+  { animal: ['🦛','ฮิปโป','Hippo'], foods: [['🍉','แตงโม','Watermelon']] },
+  { animal: ['🐳','วาฬ','Whale'], foods: [['🐟','ปลา','Fish']] }
+];
+
+/* Game State Management */
+const TOTAL_LEVELS = 12;
+function roundsForLevel(level) { return level <= 4 ? 5 : level <= 10 ? 7 : 10; }
+function matchingRoundsForLevel(level) { return level >= 11 ? 2 : 1; }
+function matchingPairsForLevel(level) { return level >= 5 ? 5 : 4; }
+function roundStartIndex(level) { let n = 0; for (let i = 1; i < level; i++) n += roundsForLevel(i); return n; }
+
+let userProgress = { matching: Array(12).fill(0), quiz: Array(12).fill(0), feeding: Array(12).fill(0) };
+let currentScreenState = 'start-screen', selectedGame = '', currentLevel = 1, currentRound = 1;
+let modalCallback = null, modalTimer = null;
+let selectedLeftItem = null, completedPairs = 0, currentConnectedLines = [];
+let currentQuizItem = null, currentFeedRound = null, dragCleanup = null;
+let wrongAttempts = { matching: Array(12).fill(0), quiz: Array(12).fill(0), feeding: Array(12).fill(0) };
+
+function getItemLabel(item) {
+  if (!item) return '';
+  return currentLang === 'th' ? (item.labelTh || item.label) : (item.labelEn || item.label);
+}
+
+function shuffleArray(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function makeMatchingLevel(level) {
+  const pairCount = matchingPairsForLevel(level);
+  const pool = shuffleArray(matchingPool);
+  const chosen = [];
+  const usedAnimals = new Set(), usedFoods = new Set();
+
+  for (const item of pool) {
+    const foodChoices = shuffleArray(item.foods).filter(f => !usedFoods.has(f[0]));
+    if (foodChoices.length) {
+      chosen.push({ item, food: foodChoices[0] });
+      usedAnimals.add(item.animal[0]);
+      usedFoods.add(foodChoices[0][0]);
+    }
+    if (chosen.length === pairCount) break;
+  }
+
+  if (chosen.length < pairCount) {
+    for (const item of shuffleArray(matchingPool)) {
+      if (usedAnimals.has(item.animal[0])) continue;
+      const food = shuffleArray(item.foods)[0];
+      if (!food) continue;
+      chosen.push({ item, food });
+      usedAnimals.add(item.animal[0]);
+      usedFoods.add(food[0]);
+      if (chosen.length === pairCount) break;
+    }
+  }
+
+  return {
+    pairs: chosen.map((x, i) => ({
+      id: i + 1,
+      left: { emoji: x.item.animal[0], labelTh: x.item.animal[1], labelEn: x.item.animal[2] },
+      right: { emoji: x.food[0], labelTh: x.food[1], labelEn: x.food[2] }
+    }))
+  };
+}
+
+/* Quiz Generation */
+const quizPool = [...animals, ...foods.slice(0, 20)];
+let quizRounds = [];
+
+function generateQuizRounds() {
+  quizRounds = [];
+  for (let level = 1; level <= TOTAL_LEVELS; level++) {
+    const levelPool = shuffleArray(quizPool).slice(0, roundsForLevel(level));
+    const truths = shuffleArray(Array(roundsForLevel(level)).fill(true).map((_, i) => i % 3 !== 1));
+    levelPool.forEach((shown, roundIndex) => {
+      const answer = truths[roundIndex];
+      const wrong = quizPool.find(x => getItemLabel(x) !== getItemLabel(shown) && x.emoji !== shown.emoji);
+      const asked = answer ? shown : wrong;
+      quizRounds.push({ shown, asked, answer });
+    });
+  }
+}
+generateQuizRounds();
+
+/* Feeding Rounds Setup */
+let feedRounds = [];
+function generateFeedRounds() {
+  feedRounds = [];
+  
+  for (let level = 1; level <= TOTAL_LEVELS; level++) {
+    const totalRounds = roundsForLevel(level);
+    let lastTargetEmoji = null;
+    
+    for (let round = 1; round <= totalRounds; round++) {
+      let availableFoods = shuffleArray(foods);
+      
+      if (lastTargetEmoji && availableFoods.length > 2) {
+        const filtered = availableFoods.filter(f => f.emoji !== lastTargetEmoji);
+        if (filtered.length >= 2) {
+          availableFoods = filtered;
+        }
+      }
+      
+      const foodA = availableFoods[0];
+      const foodB = availableFoods[1];
+      
+      const target = (Math.random() < 0.5) ? foodA : foodB;
+      lastTargetEmoji = target.emoji;
+      
+      feedRounds.push({ level, round, wants: [foodA, foodB], target });
+    }
+  }
+}
+generateFeedRounds();
+
+/* UI Alert / Modal Helper Functions */
+function showTimedGameAlert(icon, title, message = '', seconds = 3, callback = null, countdownPrefixKey = 'countDownPrefix') {
+  if (modalTimer) { clearInterval(modalTimer); modalTimer = null; }
+  const countdown = document.getElementById('modal-countdown');
+  const lang = I18N[currentLang];
+  document.getElementById('modal-icon').textContent = icon;
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-message').textContent = message;
+  document.getElementById('modal-stars').style.display = 'none';
+  document.getElementById('modal-btn').style.display = 'none';
+  document.getElementById('modal-secondary-btn').style.display = 'none';
+  document.getElementById('modal-replay-btn').style.display = 'none';
+  document.getElementById('game-modal').style.display = 'flex';
+  modalCallback = callback;
+  
+  let remaining = seconds;
+  const prefixText = lang[countdownPrefixKey] || lang.countDownPrefix;
+  countdown.style.display = 'block';
+  countdown.textContent = `${prefixText} ${remaining}`;
+  
+  modalTimer = setInterval(() => {
+    remaining--;
+    if (remaining <= 0) {
+      clearInterval(modalTimer); modalTimer = null;
+      countdown.textContent = '';
+      const cb = modalCallback; modalCallback = null;
+      document.getElementById('game-modal').style.display = 'none';
+      if (cb) cb();
+    } else {
+      countdown.textContent = `${prefixText} ${remaining}`;
+    }
+  }, 1000);
+}
+
+function earnedStarsForLevel(game, level) {
+  const wrong = wrongAttempts[game][level - 1] || 0;
+  if (level >= 5) return wrong >= 5 ? 1 : wrong >= 3 ? 2 : 3;
+  return Math.max(1, 3 - Math.floor(wrong / 2));
+}
+
+function showLevelComplete() {
+  const lang = I18N[currentLang];
+  const nextBtn = document.getElementById('modal-btn');
+  const levelBtn = document.getElementById('modal-secondary-btn');
+  const replayBtn = document.getElementById('modal-replay-btn');
+  
+  document.getElementById('modal-icon').textContent = '🎉';
+  document.getElementById('modal-title').textContent = lang.roundCompleted;
+  
+  const msg = selectedGame === 'matching' ? lang.matchingWinMsg : selectedGame === 'quiz' ? lang.quizWinMsg : lang.feedingWinMsg;
+  const earnedStars = earnedStarsForLevel(selectedGame, currentLevel);
+  userProgress[selectedGame][currentLevel - 1] = earnedStars;
+  
+  document.getElementById('modal-stars').style.display = 'block';
+  document.getElementById('modal-stars').textContent = '★'.repeat(earnedStars) + '☆'.repeat(3 - earnedStars);
+  
+  const starNote = earnedStars === 3 ? lang.starsExcellent : earnedStars === 2 ? lang.starsGood : lang.starsNice;
+  document.getElementById('modal-message').textContent = `${msg}\n\n${starNote}`;
+  
+  if (currentLevel < TOTAL_LEVELS) {
+    nextBtn.textContent = `${lang.levelPrefix} ${currentLevel + 1}`;
+    nextBtn.style.display = 'inline-flex';
+    nextBtn.onclick = () => { closeModal(); startLevel(currentLevel + 1); };
+  } else {
+    nextBtn.textContent = lang.selectLevel;
+    nextBtn.style.display = 'inline-flex';
+    nextBtn.onclick = () => { closeModal(); renderLevelGrid(); showScreen('level-screen'); };
+  }
+  
+  levelBtn.textContent = lang.selectLevel;
+  levelBtn.style.display = 'inline-flex';
+  levelBtn.onclick = () => { closeModal(); renderLevelGrid(); showScreen('level-screen'); };
+  
+  replayBtn.textContent = lang.replay;
+  replayBtn.style.display = 'inline-flex';
+  replayBtn.onclick = () => { closeModal(); startLevel(currentLevel); };
+  
+  document.getElementById('game-modal').style.display = 'flex';
+}
+
+function closeModal() {
+  if (modalTimer) { clearInterval(modalTimer); modalTimer = null; }
+  document.getElementById('modal-countdown').style.display = 'none';
+  document.getElementById('game-modal').style.display = 'none';
+  document.getElementById('modal-btn').style.display = 'inline-flex';
+  const cb = modalCallback; modalCallback = null; if (cb) cb();
+}
+
+/* Confirm Exit Logic */
+function confirmExit() {
+  const lang = I18N[currentLang];
+  if (modalTimer) { clearInterval(modalTimer); modalTimer = null; }
+  
+  document.getElementById('modal-icon').textContent = '🚪';
+  document.getElementById('modal-title').textContent = lang.exitDialogTitle;
+  document.getElementById('modal-message').textContent = lang.exitDialogMsg;
+  document.getElementById('modal-stars').style.display = 'none';
+  document.getElementById('modal-countdown').style.display = 'none';
+
+  const okBtn = document.getElementById('modal-btn');
+  const cancelBtn = document.getElementById('modal-secondary-btn');
+  const replayBtn = document.getElementById('modal-replay-btn');
+
+  okBtn.textContent = lang.confirm;
+  okBtn.style.display = 'inline-flex';
+  okBtn.onclick = () => {
+    closeModal();
+    generateQuizRounds();
+    generateFeedRounds();
+    
+    selectedLeftItem = null;
+    completedPairs = 0;
+    currentConnectedLines = [];
+    currentQuizItem = null;
+    currentFeedRound = null;
+    if (dragCleanup) dragCleanup();
+    
+    showScreen('home-screen');
+  };
+
+  cancelBtn.textContent = lang.cancel;
+  cancelBtn.style.display = 'inline-flex';
+  cancelBtn.onclick = () => {
+    closeModal();
+  };
+
+  replayBtn.style.display = 'none';
+  document.getElementById('game-modal').style.display = 'flex';
+}
+
+/* Screen Navigation */
+function showScreen(id) {
+  const modal = document.getElementById('game-modal');
+  if (modal) { if (modalTimer) { clearInterval(modalTimer); modalTimer = null; } modal.style.display = 'none'; modalCallback = null; }
+  
+  currentScreenState = id;
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  
+  const top = document.getElementById('top-bar'), round = document.getElementById('round-indicator');
+  const exitBtn = document.getElementById('btn-exit');
+  const isGameScreen = ['matching-screen', 'quiz-screen', 'feeding-screen'].includes(id);
+
+  if (id === 'start-screen') {
+    top.style.display = 'none';
+  } else {
+    top.style.display = 'flex';
+    round.style.display = isGameScreen ? 'block' : 'none';
+  }
+
+  // แสดงปุ่มออกจากเกมเฉพาะเมื่ออยู่ในหน้าการเล่นเกมเท่านั้น
+  if (exitBtn) {
+    exitBtn.style.display = isGameScreen ? 'inline-flex' : 'none';
+  }
+  
+  if (id === 'home-screen') document.getElementById('bar-title').textContent = 'MASTERKIDS';
+  if (id === 'level-screen') document.getElementById('bar-title').textContent = gameTitle(selectedGame);
+}
+
+function gameTitle(g) {
+  return { matching: 'MATCHING', quiz: 'YES OR NO', feeding: 'WHAT I EAT?' }[g] || 'MASTERKIDS';
+}
+
+function handleBack() {
+  if (currentScreenState === 'home-screen') showScreen('start-screen');
+  else if (currentScreenState === 'level-screen') showScreen('home-screen');
+  else if (['matching-screen', 'quiz-screen', 'feeding-screen'].includes(currentScreenState)) {
+    generateQuizRounds();
+    generateFeedRounds();
+    renderLevelGrid(); 
+    showScreen('level-screen');
+  }
+}
+
+function selectGame(g) {
+  selectedGame = g;
+  if (g === 'quiz') generateQuizRounds();
+  if (g === 'feeding') generateFeedRounds();
+  
+  updateLanguageUI();
+  renderLevelGrid();
+  showScreen('level-screen');
+}
+
+function renderLevelGrid() {
+  const grid = document.getElementById('level-grid'); grid.innerHTML = '';
+  const lang = I18N[currentLang];
+  for (let i = 1; i <= TOTAL_LEVELS; i++) {
+    const stars = userProgress[selectedGame][i - 1], card = document.createElement('div');
+    card.className = 'level-card';
+    const starText = '★'.repeat(stars) + '☆'.repeat(3 - stars);
+    card.innerHTML = `<div class="level-num">${lang.levelPrefix} ${i}</div><div class="level-stars">${starText}</div>`;
+    card.onclick = () => startLevel(i);
+    grid.appendChild(card);
+  }
+}
+
+function maxRoundsForGame() {
+  return selectedGame === 'matching' ? matchingRoundsForLevel(currentLevel) : roundsForLevel(currentLevel);
+}
+
+function updateHeader() {
+  const lang = I18N[currentLang];
+  document.getElementById('bar-title').textContent = `${gameTitle(selectedGame)} • ${lang.levelPrefix} ${currentLevel}`;
+  document.getElementById('round-indicator').textContent = `${lang.roundPrefix} ${currentRound}/${maxRoundsForGame()}`;
+}
+
+function makeDots(id) {
+  const e = document.getElementById(id); e.innerHTML = ''; const max = maxRoundsForGame();
+  for (let i = 1; i <= max; i++) {
+    const d = document.createElement('span');
+    d.className = 'progress-dot ' + (i < currentRound ? 'done ' : '') + (i === currentRound ? 'active' : '');
+    e.appendChild(d);
+  }
+}
+
+function startLevel(lvl) {
+  currentLevel = lvl; currentRound = 1; wrongAttempts[selectedGame][lvl - 1] = 0;
+  updateHeader();
+  showScreen(selectedGame === 'matching' ? 'matching-screen' : selectedGame === 'quiz' ? 'quiz-screen' : 'feeding-screen');
+  selectedGame === 'matching' ? setupMatchingRound() : selectedGame === 'quiz' ? setupQuizRound() : setupFeedingRound();
+}
+
+function nextRound() {
+  const maxRounds = maxRoundsForGame();
+  if (currentRound < maxRounds) {
+    currentRound++; updateHeader();
+    selectedGame === 'matching' ? setupMatchingRound() : selectedGame === 'quiz' ? setupQuizRound() : setupFeedingRound();
+  } else showLevelComplete();
+}
+
+/* MATCHING GAME LOGIC */
+const canvas = document.getElementById('line-canvas'), ctx = canvas.getContext('2d');
+
+function setupMatchingRound() {
+  selectedLeftItem = null; completedPairs = 0; currentConnectedLines = [];
+  const data = makeMatchingLevel(currentLevel);
+  const left = document.getElementById('left-column'), right = document.getElementById('right-column');
+  left.innerHTML = ''; right.innerHTML = '';
+  
+  const rightItems = shuffleArray(data.pairs);
+  data.pairs.forEach(item => left.appendChild(matchCard(item.left, item.id, true)));
+  rightItems.forEach(item => right.appendChild(matchCard(item.right, item.id, false)));
+  
+  resizeCanvas(); makeDots('match-dots');
+}
+
+function matchCard(v, id, isLeft) {
+  const wrap = document.createElement('div');
+  wrap.className = 'match-item';
+  
+  const label = document.createElement('div');
+  label.className = 'match-label-outside';
+  label.textContent = getItemLabel(v);
+  
+  const d = document.createElement('div');
+  d.className = 'match-card';
+  d.dataset.id = id;
+  d.dataset.side = isLeft ? 'left' : 'right';
+  d.innerHTML = `<div class="visual">${renderEmojiHTML(v.emoji)}</div><div class="match-dot"></div>`;
+  d.onclick = () => handleMatchClick(d);
+  
+  wrap.appendChild(d);
+  wrap.appendChild(label);
+  return wrap;
+}
+
+function resizeCanvas() {
+  const r = document.getElementById('matching-screen').getBoundingClientRect();
+  canvas.width = r.width; canvas.height = r.height;
+  redrawCanvasLines();
+}
+window.addEventListener('resize', () => { if (currentScreenState === 'matching-screen') resizeCanvas(); });
+
+function handleMatchClick(card) {
+  if (card.classList.contains('matched')) return;
+  if (card.dataset.side === 'left') {
+    document.querySelectorAll('#left-column .match-card.selected').forEach(x => x.classList.remove('selected'));
+    selectedLeftItem = card;
+    card.classList.add('selected');
+    return;
+  }
+  if (!selectedLeftItem) return;
+  const source = selectedLeftItem;
+  selectedLeftItem = null;
+  source.classList.remove('selected');
+  handleMatchDrop(source, card);
+}
+
+function handleMatchDrop(source, target) {
+  if (source.dataset.id === target.dataset.id) {
+    source.classList.add('matched'); target.classList.add('matched');
+    drawConnectionLine(source, target); completedPairs++;
+    if (completedPairs === matchingPairsForLevel(currentLevel)) setTimeout(nextRound, 300);
+  } else {
+    wrongAttempts.matching[currentLevel - 1]++;
+    showTimedGameAlert('💛', I18N[currentLang].tryAgain, '', 3, null, 'tryAgainCountDown');
+  }
+}
+
+function drawConnectionLine(a, b) {
+  const ar = a.querySelector('.match-dot').getBoundingClientRect();
+  const br = b.querySelector('.match-dot').getBoundingClientRect();
+  const cr = canvas.getBoundingClientRect();
+  currentConnectedLines.push({ x1: ar.left + 6 - cr.left, y1: ar.top + 6 - cr.top, x2: br.left + 6 - cr.left, y2: br.top + 6 - cr.top });
+  redrawCanvasLines();
+}
+
+function redrawCanvasLines() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.strokeStyle = '#75cda9'; ctx.lineWidth = 5; ctx.lineCap = 'round';
+  currentConnectedLines.forEach(l => {
+    ctx.beginPath(); ctx.moveTo(l.x1, l.y1); ctx.lineTo(l.x2, l.y2); ctx.stroke();
+  });
+}
+
+/* QUIZ GAME LOGIC */
+function setupQuizRound() {
+  const quizIndex = roundStartIndex(currentLevel) + (currentRound - 1);
+  currentQuizItem = quizRounds[quizIndex];
+  if (!currentQuizItem || !currentQuizItem.shown) {
+    const fallback = quizPool[quizIndex % quizPool.length];
+    currentQuizItem = { shown: fallback, asked: fallback, answer: true };
+  }
+  
+  const lang = I18N[currentLang];
+  const askedName = getItemLabel(currentQuizItem.asked);
+  document.getElementById('quiz-question').textContent = `${lang.isThis} ${askedName} ${lang.isItQuestion}`;
+  
+  const quizImg = document.getElementById('quiz-img');
+  quizImg.innerHTML = renderEmojiHTML(currentQuizItem.shown.emoji);
+  makeDots('quiz-dots');
+}
+
+function answerQuiz(ans) {
+  const isCorrect = ans === currentQuizItem.answer;
+  const lang = I18N[currentLang];
+  const shownName = getItemLabel(currentQuizItem.shown);
+  const askedName = getItemLabel(currentQuizItem.asked);
+  
+  if (isCorrect) {
+    const message = currentQuizItem.answer
+      ? `${lang.rightAnswerIs} ${shownName}`
+      : `${lang.wrongAnswerIs} ${askedName}, ${lang.called} ${shownName}`;
+    showTimedGameAlert('🎉', lang.goodJob, message, 3, nextRound);
+  } else {
+    wrongAttempts.quiz[currentLevel - 1]++;
+    const message = lang.quizTryAgainMsg.replace('{item}', askedName);
+    showTimedGameAlert('💛', lang.tryAgain, message, 3, setupQuizRound, 'tryAgainCountDown');
+  }
+}
+
+/* FEEDING GAME LOGIC */
+function setupFeedingRound() {
+  const item = feedRounds[roundStartIndex(currentLevel) + (currentRound - 1)];
+  currentFeedRound = item;
+  const lang = I18N[currentLang];
+  
+  document.getElementById('want-img-1').innerHTML = renderEmojiHTML(item.wants[0].emoji);
+  document.getElementById('want-img-2').innerHTML = renderEmojiHTML(item.wants[1].emoji);
+  
+  document.getElementById('want-label-1').textContent = `${lang.wantToEat} ${getItemLabel(item.wants[0])}`;
+  document.getElementById('want-label-2').textContent = `${lang.wantToEat} ${getItemLabel(item.wants[1])}`;
+  
+  document.getElementById('food-img').innerHTML = renderEmojiHTML(item.target.emoji);
+  
+  document.getElementById('char-1').classList.remove('target');
+  document.getElementById('char-2').classList.remove('target');
+  
+  const targetIndex = item.wants[0].emoji === item.target.emoji ? 1 : 2;
+  document.getElementById(`char-${targetIndex}`).classList.add('target');
+  
+  resetFoodPosition();
+  makeDots('feed-dots');
+  initDragAndDrop();
+}
+
+function resetFoodPosition() {
+  const f = document.getElementById('active-food');
+  f.style.position = 'absolute'; f.style.left = '50%'; f.style.top = '50%';
+  f.style.transform = 'translate(-50%,-50%)'; f.classList.remove('dragging');
+}
+
+function initDragAndDrop() {
+  const f = document.getElementById('active-food');
+  if (dragCleanup) dragCleanup();
+  let dragging = false, sx = 0, sy = 0, sl = 0, st = 0;
+  
+  const down = e => {
+    e.preventDefault(); dragging = true; f.classList.add('dragging');
+    const p = e.touches ? e.touches[0] : e;
+    const r = f.getBoundingClientRect(), pr = f.parentElement.getBoundingClientRect();
+    sx = p.clientX; sy = p.clientY; sl = r.left - pr.left; st = r.top - pr.top;
+    f.style.position = 'absolute'; f.style.transform = 'none'; f.style.left = sl + 'px'; f.style.top = st + 'px';
+  };
+  
+  const move = e => {
+    if (!dragging) return;
+    const p = e.touches ? e.touches[0] : e;
+    f.style.left = (sl + p.clientX - sx) + 'px';
+    f.style.top = (st + p.clientY - sy) + 'px';
+  };
+  
+  const up = () => {
+    if (!dragging) return;
+    dragging = false; f.classList.remove('dragging');
+    const fr = f.getBoundingClientRect();
+    const c1 = document.getElementById('char-1').getBoundingClientRect();
+    const c2 = document.getElementById('char-2').getBoundingClientRect();
+    
+    let target = overlap(fr, c1) ? 1 : overlap(fr, c2) ? 2 : null;
+    const correct = target === ((currentFeedRound.wants[0].emoji === currentFeedRound.target.emoji) ? 1 : 2);
+    
+    if (correct) {
+      nextRound();
+    } else {
+      wrongAttempts.feeding[currentLevel - 1]++;
+      showTimedGameAlert('💛', I18N[currentLang].tryAgain, '', 3, resetFoodPosition, 'tryAgainCountDown');
+    }
+  };
+  
+  f.onmousedown = down; f.ontouchstart = down;
+  document.addEventListener('mousemove', move); document.addEventListener('touchmove', move, { passive: false });
+  document.addEventListener('mouseup', up); document.addEventListener('touchend', up);
+  
+  dragCleanup = () => {
+    document.removeEventListener('mousemove', move);
+    document.removeEventListener('touchmove', move);
+    document.removeEventListener('mouseup', up);
+    document.removeEventListener('touchend', up);
+  };
+}
+
+function overlap(a, b) {
+  return !(a.right < b.left + 20 || a.left > b.right - 20 || a.bottom < b.top + 20 || a.top > b.bottom - 20);
+}
+
+/* Initialization */
+window.addEventListener('DOMContentLoaded', () => {
+  renderAllStaticEmojis();
+  updateLanguageUI();
+});
+</script>
+</body>
+</html>
